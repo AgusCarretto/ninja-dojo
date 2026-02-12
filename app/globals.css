@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  /* Acá definimos tus colores Ninja/Medieval para que Tailwind los reconozca */
+  --color-background: #09090b;
+  --color-surface: #18181b;
+
+  --color-primary: #f59e0b;
+  --color-secondary: #3b82f6;
+
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+
+  --color-text-primary: #f4f4f5;
+  --color-text-secondary: #a1a1aa;
+}
+
+/* Estilos base para que toda la app arranque oscura */
+:root {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
