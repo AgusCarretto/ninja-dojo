@@ -1,17 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Sword, Book, Zap, Brain, Users, Crown } from 'lucide-react'
+import { X, Sword, Book, Zap, Brain, Users, Crown, Save } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface NewTaskModalProps {
     isOpen: boolean
     onClose: () => void
+    taskToEdit?: any // Prop opcional: Si viene, es edición
 }
 
-export default function NewTaskModal({ isOpen, onClose }: NewTaskModalProps) {
+export default function NewTaskModal({ isOpen, onClose, taskToEdit }: NewTaskModalProps) {
     const [title, setTitle] = useState('')
     const [attribute, setAttribute] = useState('STR')
     const [isBoss, setIsBoss] = useState(false)
@@ -20,7 +22,20 @@ export default function NewTaskModal({ isOpen, onClose }: NewTaskModalProps) {
     const supabase = createClient()
     const router = useRouter()
 
-    // Iconos para los atributos
+    // Si nos pasan una tarea para editar, llenamos el formulario
+    useEffect(() => {
+        if (taskToEdit) {
+            setTitle(taskToEdit.title)
+            setAttribute(taskToEdit.attribute)
+            setIsBoss(taskToEdit.is_boss)
+        } else {
+            // Si no, limpiamos (Modo Crear)
+            setTitle('')
+            setAttribute('STR')
+            setIsBoss(false)
+        }
+    }, [taskToEdit, isOpen]) // Se ejecuta cuando abrimos el modal
+
     const attributes = [
         { id: 'STR', label: 'Fuerza', icon: Sword, color: 'text-red-500', bg: 'bg-red-500/10' },
         { id: 'INT', label: 'Intelecto', icon: Book, color: 'text-blue-500', bg: 'bg-blue-500/10' },
@@ -32,27 +47,34 @@ export default function NewTaskModal({ isOpen, onClose }: NewTaskModalProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!title) return
-
         setLoading(true)
 
-        // 1. Obtenemos el usuario actual
         const { data: { user } } = await supabase.auth.getUser()
 
         if (user) {
-            // 2. Insertamos la tarea
-            const { error } = await supabase.from('tasks').insert({
-                user_id: user.id,
-                title,
-                attribute,
-                is_boss: isBoss
-            })
+            let error
+
+            if (taskToEdit) {
+                // --- MODO EDICIÓN (UPDATE) ---
+                const { error: updateError } = await supabase
+                    .from('tasks')
+                    .update({ title, attribute, is_boss: isBoss })
+                    .eq('id', taskToEdit.id)
+                error = updateError
+            } else {
+                // --- MODO CREACIÓN (INSERT) ---
+                const { error: insertError } = await supabase
+                    .from('tasks')
+                    .insert({ user_id: user.id, title, attribute, is_boss: isBoss })
+                error = insertError
+            }
 
             if (error) {
-                alert('Error al crear la misión')
+                toast.error('Error al guardar la misión')
             } else {
-                setTitle('')
-                setIsBoss(false)
-                router.refresh() // Recarga los datos del servidor para ver la tarea nueva
+                toast.success(taskToEdit ? 'Misión actualizada' : 'Misión aceptada')
+                if (!taskToEdit) setTitle('') // Limpiar solo si creamos
+                router.refresh()
                 onClose()
             }
         }
@@ -63,25 +85,19 @@ export default function NewTaskModal({ isOpen, onClose }: NewTaskModalProps) {
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Fondo oscuro (Overlay) */}
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={onClose}
-                        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        onClick={onClose} className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60]"
                     />
-
-                    {/* El Modal */}
                     <motion.div
-                        initial={{ y: '100%' }}
-                        animate={{ y: 0 }}
-                        exit={{ y: '100%' }}
+                        initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="fixed bottom-0 left-0 right-0 bg-surface border-t border-white/10 rounded-t-3xl p-6 z-50 max-h-[90vh] overflow-y-auto"
+                        className="fixed bottom-0 left-0 right-0 bg-surface border-t border-white/10 rounded-t-3xl p-6 z-[70] max-h-[90vh] overflow-y-auto"
                     >
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold text-white">Nueva Misión</h2>
+                            <h2 className="text-xl font-bold text-white">
+                                {taskToEdit ? 'Editar Misión' : 'Nueva Misión'}
+                            </h2>
                             <button onClick={onClose} className="p-2 bg-white/5 rounded-full text-text-secondary">
                                 <X size={20} />
                             </button>
@@ -94,16 +110,15 @@ export default function NewTaskModal({ isOpen, onClose }: NewTaskModalProps) {
                                 <input
                                     autoFocus
                                     type="text"
-                                    placeholder="Ej: Correr 5km, Leer 10 pág..."
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     className="w-full p-4 bg-background border border-white/10 rounded-xl text-white placeholder:text-text-secondary focus:outline-none focus:border-primary transition-colors"
                                 />
                             </div>
 
-                            {/* Selector de Atributo */}
+                            {/* Atributos */}
                             <div className="space-y-2">
-                                <label className="text-xs uppercase tracking-wider text-text-secondary font-bold">Atributo a Entrenar</label>
+                                <label className="text-xs uppercase tracking-wider text-text-secondary font-bold">Atributo</label>
                                 <div className="grid grid-cols-3 gap-2">
                                     {attributes.map((attr) => (
                                         <button
@@ -122,7 +137,7 @@ export default function NewTaskModal({ isOpen, onClose }: NewTaskModalProps) {
                                 </div>
                             </div>
 
-                            {/* Switch de BOSS */}
+                            {/* Boss Switch */}
                             <div
                                 onClick={() => setIsBoss(!isBoss)}
                                 className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all ${isBoss ? 'bg-red-500/20 border-red-500' : 'bg-background border-white/5'
@@ -134,18 +149,17 @@ export default function NewTaskModal({ isOpen, onClose }: NewTaskModalProps) {
                                     </div>
                                     <div>
                                         <p className={`font-bold ${isBoss ? 'text-red-400' : 'text-text-primary'}`}>Es un BOSS</p>
-                                        <p className="text-xs text-text-secondary">Los Bosses dan x10 XP pero son difíciles.</p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Botón de Guardar */}
                             <button
                                 disabled={loading}
                                 type="submit"
-                                className="w-full py-4 bg-primary text-background font-black uppercase tracking-widest rounded-xl hover:bg-primary/90 active:scale-95 transition-all"
+                                className="w-full py-4 bg-primary text-background font-black uppercase tracking-widest rounded-xl hover:bg-primary/90 active:scale-95 transition-all flex items-center justify-center gap-2"
                             >
-                                {loading ? 'Inscribiendo...' : 'Aceptar Misión'}
+                                <Save size={18} />
+                                {loading ? 'Guardando...' : 'Guardar Cambios'}
                             </button>
                         </form>
                     </motion.div>

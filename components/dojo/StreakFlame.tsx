@@ -1,66 +1,85 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { Flame } from 'lucide-react'
 
 interface StreakFlameProps {
     streak: number
-    isActive?: boolean
 }
 
-export default function StreakFlame({ streak, isActive = false }: StreakFlameProps) {
-    // Calculamos la intensidad del fuego según la racha
-    // Racha 0 = Gris, Racha 1-2 = Naranja suave, Racha 7+ = Azul intenso (Fuego Místico)
-    const getFlameColor = () => {
-        if (streak === 0) return ['#52525b', '#27272a'] // Zinc (ceniza)
-        if (streak >= 7) return ['#3b82f6', '#8b5cf6'] // Azul/Violeta (fuego mágico)
-        return ['#f59e0b', '#ef4444'] // Naranja/Rojo (fuego normal)
+export default function StreakFlame({ streak }: StreakFlameProps) {
+    // Colores según intensidad
+    const getColors = () => {
+        if (streak === 0) return { main: '#52525b', glow: '#27272a', text: 'text-zinc-500' } // Apagado
+        if (streak >= 7) return { main: '#3b82f6', glow: '#60a5fa', text: 'text-blue-500' } // Fuego Azul (Pro)
+        return { main: '#f59e0b', glow: '#ea580c', text: 'text-orange-500' } // Fuego Normal
     }
 
-    const colors = getFlameColor()
+    const colors = getColors()
+    const isActive = streak > 0
 
     return (
-        <div className="relative flex flex-col items-center justify-center">
-            {/* El Fuego Animado */}
+        <div className="relative flex flex-col items-center justify-center py-4">
+
+            {/* 1. EL HALO DE LUZ (GLOW) - "Respirando" */}
             <motion.div
-                animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.8, 1, 0.8],
-                    filter: [`blur(2px)`, `blur(4px)`, `blur(2px)`]
-                }}
-                transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                }}
-                className="w-32 h-32 rounded-full absolute blur-xl"
-                style={{
-                    background: `radial-gradient(circle, ${colors[0]}, transparent 70%)`
-                }}
+                animate={isActive ? {
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                } : {}}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute w-32 h-32 rounded-full blur-3xl z-0"
+                style={{ backgroundColor: colors.glow }}
             />
 
-            {/* Icono Central o Número */}
-            <div className="relative z-10 flex flex-col items-center">
-                <motion.svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-16 h-16 mb-2"
-                    style={{ color: streak > 0 ? colors[0] : '#52525b' }}
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                >
-                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.113.25-2.127.688-3" />
-                </motion.svg>
+            {/* 2. PARTÍCULAS DE FUEGO (Solo si está activo) */}
+            {isActive && [...Array(6)].map((_, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute w-2 h-2 rounded-full bg-primary z-0"
+                    initial={{ opacity: 0, y: 0, x: 0, scale: 0 }}
+                    animate={{
+                        opacity: [0, 1, 0],
+                        y: -60 - Math.random() * 40, // Suben aleatoriamente
+                        x: (Math.random() - 0.5) * 40, // Se mueven a los lados
+                        scale: [0, 1, 0.5],
+                    }}
+                    transition={{
+                        duration: 2 + Math.random(),
+                        repeat: Infinity,
+                        delay: Math.random() * 2,
+                        ease: "easeOut"
+                    }}
+                    style={{ backgroundColor: colors.main }}
+                />
+            ))}
 
-                <span className="text-4xl font-black tracking-tighter text-white drop-shadow-lg">
+            {/* 3. ÍCONO PRINCIPAL - Latido más rápido */}
+            <motion.div
+                className="z-10 relative"
+                animate={isActive ? { scale: [1, 1.05, 1] } : {}}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            >
+                <Flame
+                    size={80}
+                    className={`drop-shadow-lg transition-colors duration-500 ${isActive ? 'text-primary fill-primary/20' : 'text-zinc-700'}`}
+                    style={{ color: colors.main }}
+                />
+            </motion.div>
+
+            {/* 4. CONTADOR */}
+            <div className="z-10 mt-4 text-center">
+                <motion.div
+                    key={streak} // Anima cuando el número cambia
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className={`text-5xl font-black tracking-tighter ${isActive ? 'text-white' : 'text-zinc-600'}`}
+                >
                     {streak}
-                </span>
-                <span className="text-xs uppercase tracking-widest text-white/50 font-medium mt-1">
+                </motion.div>
+                <p className="text-xs font-bold uppercase tracking-widest text-text-secondary mt-1">
                     Días Racha
-                </span>
+                </p>
             </div>
         </div>
     )

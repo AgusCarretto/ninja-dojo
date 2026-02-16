@@ -1,8 +1,13 @@
 import { createClient } from '@/lib/server-client'
 import { redirect } from 'next/navigation'
 import StreakFlame from '@/components/dojo/StreakFlame'
-import TaskManager from '@/components/dojo/TaskManager'
-import TaskList from '@/components/dojo/TaskList'
+import SignOutButton from '@/components/ui/SignOutButton'
+import LevelProgress from '@/components/dojo/LevelProgress'
+import LevelUpModal from '@/components/dojo/LevelUpModal'
+import StreakWatcher from '@/components/dojo/StreakWatcher'
+import GoldDisplay from '@/components/dojo/GoldDisplay'
+import TopUserBar from '@/components/ui/TopUserBar'
+import DojoRoom from '@/components/dojo/DojoRoom'
 
 // Esta página es asíncrona porque busca datos en el servidor
 export default async function Home() {
@@ -22,51 +27,35 @@ export default async function Home() {
     .eq('id', user.id)
     .single()
 
+
   // Si no hay perfil (error raro), mostramos datos default
   const warriorName = profile?.username || user.email?.split('@')[0] || "Guerrero"
+
   const currentStreak = profile?.streak_count || 0
   const level = profile?.level || 1
 
   return (
-    <main className="min-h-screen bg-background text-white pb-20">
+    <main className="min-h-screen bg-background text-white pb-20 overflow-hidden relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-900/20 via-background to-background pointer-events-none" />
+      <StreakWatcher />
       {/* Header del Dojo */}
-      <header className="p-6 flex justify-between items-center border-b border-white/5 bg-surface/50 backdrop-blur-md sticky top-0 z-50">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight capitalize">{warriorName}</h1>
-          <p className="text-xs text-text-secondary">Nivel {level} • Iniciado</p>
-        </div>
-        <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-danger border border-white/10" />
-      </header>
+      <TopUserBar profile={profile} />
 
       {/* Sección Hero: La Llama */}
-      <section className="flex flex-col items-center justify-center py-12 space-y-8">
-        <StreakFlame streak={currentStreak} />
+      <section className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 relative z-10">
+        <DojoRoom equipped={profile?.equipped}>
+          <StreakFlame streak={currentStreak} />
+        </DojoRoom>
+        <div className="text-center space-y-2">
+        </div>
 
         {currentStreak === 0 && (
-          <p className="text-center text-sm text-text-secondary max-w-[200px]">
+          <p className="text-center text-sm text-text-secondary max-w-[200px] animate-pulse">
             Tu fuego es débil. Completá una misión hoy para encenderlo.
           </p>
         )}
       </section>
-
-      {/* Grid de Acciones Rápidas (Placeholder para lo que sigue) */}
-      <section className="px-6 grid grid-cols-2 gap-4">
-        <div className="bg-surface border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-transform">
-          <span className="text-2xl">📜</span>
-          <span className="text-sm font-medium text-text-secondary">Misiones</span>
-        </div>
-        <div className="bg-surface border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-transform">
-          {/* Aquí irá el Radar pronto */}
-          <span className="text-2xl">📊</span>
-          <span className="text-sm font-medium text-text-secondary">Atributos</span>
-        </div>
-      </section>
-
-      {/* LISTA DE MISIONES (Nuevo) */}
-      <TaskList />
-
-      {/* Botón Flotante para Nueva Tarea (Mobile First) */}
-      <TaskManager />
+      <LevelUpModal currentLevel={profile?.level || 1} />
     </main>
   )
 }
