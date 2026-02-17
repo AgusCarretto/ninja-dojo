@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Flame, Scroll, ChartBar, Store } from 'lucide-react'
+import { Flame, Scroll, ChartBar, Store, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function BottomNav() {
@@ -21,6 +21,11 @@ export default function BottomNav() {
             name: 'Misiones',
             href: '/missions',
             icon: Scroll,
+        },
+        {
+            name: 'Social',
+            href: '/social',
+            icon: Users,
         },
         {
             name: 'Stats',

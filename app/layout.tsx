@@ -34,7 +34,7 @@ export default function RootLayout({
         <Toaster
           position="bottom-left"  // Abajo a la izquierda
           offset="120px"          // <--- IMPORTANTE: Esto las levanta por encima del menú
-          visibleToasts={2}       // Solo muestra 2 a la vez (para no tapar la pantalla)
+          visibleToasts={3}       // Solo muestra 2 a la vez (para no tapar la pantalla)
           richColors              // Colores lindos (Verde/Rojo)
           theme="dark"            // Tema oscuro
           closeButton             // (Opcional) Agrega una X pequeña para cerrar
