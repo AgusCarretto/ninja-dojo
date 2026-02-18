@@ -6,11 +6,15 @@ import { Search, UserPlus, Users, Mail, Check, X, Shield } from 'lucide-react'
 import TopUserBar from '@/components/ui/TopUserBar'
 import DojoLoader from '@/components/ui/DojoLoader'
 import { toast } from 'sonner'
+import { Trophy } from 'lucide-react'
+import Link from 'next/link'
+import { Eye } from 'lucide-react'
 
 export default function SocialPage() {
-    const [activeTab, setActiveTab] = useState<'friends' | 'inbox'>('friends')
+    const [activeTab, setActiveTab] = useState<'friends' | 'inbox' | 'ranking'>('friends')
     const [profile, setProfile] = useState<any>(null)
     const [loading, setLoading] = useState(true)
+    const [leaderboard, setLeaderboard] = useState<any[]>([])
 
     // Estados para búsqueda y listas
     const [searchTerm, setSearchTerm] = useState('')
@@ -29,6 +33,9 @@ export default function SocialPage() {
             // 1. Perfil propio
             const { data: prof } = await supabase.from('profiles').select('*').eq('id', user.id).single()
             setProfile(prof)
+
+            const { data: topUsers } = await supabase.rpc('get_leaderboard', { limit_count: 10 })
+            setLeaderboard(topUsers || [])
 
             // 2. Obtener Solicitudes Pendientes (Donde yo soy el receiver)
             const { data: pending } = await supabase
@@ -156,6 +163,12 @@ export default function SocialPage() {
                                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                             )}
                         </button>
+                        <button
+                            onClick={() => setActiveTab('ranking')}
+                            className={`p-2 rounded-lg transition-all ${activeTab === 'ranking' ? 'bg-amber-500/20 text-amber-500' : 'text-text-secondary'}`}
+                        >
+                            <Trophy size={20} />
+                        </button>
                     </div>
                 </header>
 
@@ -222,6 +235,12 @@ export default function SocialPage() {
                                                 <p className="font-bold">{friend.username}</p>
                                                 <p className="text-xs text-primary font-medium">Nivel {friend.level}</p>
                                             </div>
+                                            <Link
+                                                href={`/dojo/${encodeURIComponent(friend.username)}`}
+                                                className="p-3 bg-white/5 hover:bg-primary/20 text-text-secondary hover:text-primary rounded-xl transition-all"
+                                            >
+                                                <Eye size={20} />
+                                            </Link>
                                         </div>
                                     ))}
                                 </div>
@@ -266,10 +285,67 @@ export default function SocialPage() {
                                         >
                                             <Check size={18} />
                                         </button>
+
                                     </div>
                                 </div>
                             ))
                         )}
+                    </div>
+                )}
+                {activeTab === 'ranking' && (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
+                        <div className="bg-gradient-to-r from-amber-500/20 to-transparent p-4 rounded-2xl border border-amber-500/20 mb-6">
+                            <h3 className="text-amber-500 font-black uppercase tracking-widest text-xs mb-1">Hall de la Fama</h3>
+                            <p className="text-white text-sm">Los guerreros más poderosos del servidor.</p>
+                        </div>
+
+                        {leaderboard.map((user, index) => (
+                            <div key={user.id} className="flex items-center gap-4 p-4 bg-surface border border-white/5 rounded-2xl relative overflow-hidden group">
+                                {/* Número de Posición */}
+                                <div className={`absolute -left-2 top-0 bottom-0 w-10 flex items-center justify-center font-black text-4xl opacity-10 italic 
+          ${index === 0 ? 'text-amber-400 opacity-30' :
+                                        index === 1 ? 'text-zinc-300 opacity-30' :
+                                            index === 2 ? 'text-amber-700 opacity-30' : 'text-white'}`}>
+                                    #{index + 1}
+                                </div>
+
+                                {/* Medallas para el Top 3 */}
+                                <div className="relative z-10">
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl border-2 shadow-lg
+            ${index === 0 ? 'bg-amber-500 text-black border-amber-300 shadow-amber-500/20' :
+                                            index === 1 ? 'bg-zinc-400 text-black border-zinc-200' :
+                                                index === 2 ? 'bg-amber-800 text-white border-amber-600' : 'bg-zinc-800 border-zinc-700 text-zinc-400'}`}>
+                                        {user.avatar_url || (index === 0 ? '👑' : '🥋')}
+                                    </div>
+                                </div>
+
+                                <div className="flex-1 relative z-10">
+                                    <div className="flex justify-between items-center">
+                                        <p className={`font-bold ${user.id === profile?.id ? 'text-primary' : 'text-white'}`}>
+                                            {user.username} {user.id === profile?.id && '(Tú)'}
+                                        </p>
+                                        <span className="text-xs font-mono text-text-secondary bg-black/30 px-2 py-1 rounded">
+                                            LVL {user.level}
+                                        </span>
+                                    </div>
+
+                                    {/* Barra de XP visual */}
+                                    <div className="w-full bg-black/40 h-1.5 rounded-full mt-2 overflow-hidden">
+                                        <div
+                                            className="h-full bg-primary"
+                                            style={{ width: `${Math.min((user.xp / (user.level * 100)) * 100, 100)}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-text-secondary text-right mt-1">{user.xp} XP total</p>
+                                </div>
+                                <Link
+                                    href={`/dojo/${encodeURIComponent(user.username)}`}
+                                    className="p-3 bg-white/5 hover:bg-primary/20 text-text-secondary hover:text-primary rounded-xl transition-all"
+                                >
+                                    <Eye size={20} />
+                                </Link>
+                            </div>
+                        ))}
                     </div>
                 )}
             </div>

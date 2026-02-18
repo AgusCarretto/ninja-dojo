@@ -43,7 +43,12 @@ export default async function Home() {
 
       {/* Sección Hero: La Llama */}
       <section className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 relative z-10">
-        <DojoRoom equipped={profile?.equipped}>
+        <DojoRoom
+          equipped={profile?.equipped}
+          dojoOwnerId={profile.id}
+          currentUserId={user.id}
+          isSelf={true}
+        >
           <StreakFlame streak={currentStreak} />
         </DojoRoom>
         <div className="text-center space-y-2">

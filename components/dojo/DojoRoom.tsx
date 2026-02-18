@@ -1,6 +1,7 @@
 'use client'
 
 import { SHOP_ITEMS } from '@/lib/constants/items'
+import ScrollWall from '@/components/dojo/ScrollWall'
 
 interface DojoRoomProps {
     equipped: {
@@ -8,28 +9,45 @@ interface DojoRoomProps {
         mat?: string
     }
     children: React.ReactNode // Aquí irá la Llama
+    dojoOwnerId: string;
+    currentUserId: string;
+    isSelf: boolean;
 }
 
-export default function DojoRoom({ equipped, children }: DojoRoomProps) {
+export default function DojoRoom({ equipped, children, dojoOwnerId, currentUserId, isSelf }: DojoRoomProps) {
     // Buscamos la config del item en nuestro catálogo
     const bgItem = SHOP_ITEMS.find(i => i.id === equipped?.background) || SHOP_ITEMS[0]
     const matItem = SHOP_ITEMS.find(i => i.id === equipped?.mat) || SHOP_ITEMS.find(i => i.id === 'mat_default')
 
     return (
-        <div className={`relative w-full h-[50vh] flex items-center justify-center overflow-hidden transition-colors duration-700 ${bgItem.cssClass}`}>
+        <div className="flex flex-col w-full">
 
-            {/* 1. Fondo Decorativo (Overlay sutil) */}
-            <div className="absolute inset-0 bg-black/20" />
+            {/* --- LA SALA DEL DOJO (Parte Visual 50vh) --- */}
+            <div className={`relative w-full h-[50vh] flex items-center justify-center overflow-hidden transition-colors duration-700 ${bgItem?.cssClass}`}>
 
-            {/* 2. El "Piso" o Tatami donde flota el fuego */}
-            <div className={`relative z-10 p-4 transition-all duration-500 ${matItem?.cssClass}`}>
-                {children}
+                {/* 1. Fondo Decorativo (Overlay sutil) */}
+                <div className="absolute inset-0 bg-black/20" />
+
+                {/* 2. El "Piso" o Tatami donde flota el fuego */}
+                <div className={`relative z-10 p-4 transition-all duration-500 ${matItem?.cssClass}`}>
+                    {children}
+                </div>
+
+                {/* 3. Nombre del lugar (Opcional) */}
+                <div className="absolute bottom-4 text-xs font-bold uppercase tracking-[0.2em] text-white/30 z-0">
+                    {bgItem?.name}
+                </div>
             </div>
 
-            {/* 3. Nombre del lugar (Opcional) */}
-            <div className="absolute bottom-4 text-xs font-bold uppercase tracking-[0.2em] text-white/30 z-0">
-                {bgItem.name}
+            {/* --- EL MURO DE PERGAMINOS (Abajo de la sala) --- */}
+            <div className="w-full bg-background min-h-[50vh]">
+                <ScrollWall
+                    dojoOwnerId={dojoOwnerId}
+                    currentUserId={currentUserId}
+                    isSelf={isSelf}
+                />
             </div>
+
         </div>
     )
 }
