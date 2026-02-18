@@ -1,86 +1,67 @@
 'use client'
+import { useEffect, useState } from 'react'
 
-import { motion } from 'framer-motion'
-import { Flame } from 'lucide-react'
+export default function StreakFlame({ streak }: { streak: number }) {
+    const scale = Math.min(1 + (streak * 0.02), 3)
 
-interface StreakFlameProps {
-    streak: number
-}
+    // Estado para el contador animado
+    const [displayStreak, setDisplayStreak] = useState(0)
 
-export default function StreakFlame({ streak }: StreakFlameProps) {
-    // Colores según intensidad
-    const getColors = () => {
-        if (streak === 0) return { main: '#52525b', glow: '#27272a', text: 'text-zinc-500' } // Apagado
-        if (streak >= 7) return { main: '#3b82f6', glow: '#60a5fa', text: 'text-blue-500' } // Fuego Azul (Pro)
-        return { main: '#f59e0b', glow: '#ea580c', text: 'text-orange-500' } // Fuego Normal
-    }
+    useEffect(() => {
+        if (streak === 0) {
+            setDisplayStreak(0)
+            return
+        }
 
-    const colors = getColors()
-    const isActive = streak > 0
+        let current = 0
+        const incrementTime = Math.max(1000 / streak, 10)
+
+        const timer = setInterval(() => {
+            current += 1
+            setDisplayStreak(current)
+            if (current >= streak) {
+                clearInterval(timer)
+                setDisplayStreak(streak)
+            }
+        }, incrementTime)
+
+        return () => clearInterval(timer)
+    }, [streak])
 
     return (
-        <div className="relative flex flex-col items-center justify-center py-4">
+        <div className="flex flex-col items-center justify-end">
 
-            {/* 1. EL HALO DE LUZ (GLOW) - "Respirando" */}
-            <motion.div
-                animate={isActive ? {
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.6, 0.3],
-                } : {}}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute w-32 h-32 rounded-full blur-3xl z-0"
-                style={{ backgroundColor: colors.glow }}
-            />
-
-            {/* 2. PARTÍCULAS DE FUEGO (Solo si está activo) */}
-            {isActive && [...Array(6)].map((_, i) => (
-                <motion.div
-                    key={i}
-                    className="absolute w-2 h-2 rounded-full bg-primary z-0"
-                    initial={{ opacity: 0, y: 0, x: 0, scale: 0 }}
-                    animate={{
-                        opacity: [0, 1, 0],
-                        y: -60 - Math.random() * 40, // Suben aleatoriamente
-                        x: (Math.random() - 0.5) * 40, // Se mueven a los lados
-                        scale: [0, 1, 0.5],
-                    }}
-                    transition={{
-                        duration: 2 + Math.random(),
-                        repeat: Infinity,
-                        delay: Math.random() * 2,
-                        ease: "easeOut"
-                    }}
-                    style={{ backgroundColor: colors.main }}
-                />
-            ))}
-
-            {/* 3. ÍCONO PRINCIPAL - Latido más rápido */}
-            <motion.div
-                className="z-10 relative"
-                animate={isActive ? { scale: [1, 1.05, 1] } : {}}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            <div
+                className={`relative flex items-end justify-center transition-all duration-1000 ease-in-out ${streak > 0 ? 'mix-blend-screen' : ''}`}
+                style={{ transform: `scale(${scale})`, transformOrigin: 'bottom center' }}
             >
-                <Flame
-                    size={80}
-                    className={`drop-shadow-lg transition-colors duration-500 ${isActive ? 'text-primary fill-primary/20' : 'text-zinc-700'}`}
-                    style={{ color: colors.main }}
-                />
-            </motion.div>
+                {streak > 0 ? (
+                    <div className="relative flex items-center justify-center w-24 h-32">
+                        <img
+                            src="/fire.gif"
+                            alt="Llama ardiente"
+                            className="relative w-full h-full object-cover contrast-[1.5] brightness-[0.9]"
+                        />
+                    </div>
+                ) : (
+                    <div className="w-16 h-8 relative flex flex-col items-center justify-center mb-8">
+                        <div className="w-full h-full bg-zinc-900 rounded-full blur-[2px] shadow-[inset_0_0_10px_rgba(0,0,0,0.9)]" />
+                        <div className="absolute bottom-1 w-3/4 h-1/2 bg-red-900/50 animate-pulse rounded-full blur-[4px]" />
+                    </div>
+                )}
+            </div>
 
-            {/* 4. CONTADOR */}
-            <div className="z-10 mt-4 text-center">
-                <motion.div
-                    key={streak} // Anima cuando el número cambia
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className={`text-5xl font-black tracking-tighter ${isActive ? 'text-white' : 'text-zinc-600'}`}
-                >
-                    {streak}
-                </motion.div>
-                <p className="text-xs font-bold uppercase tracking-widest text-text-secondary mt-1">
-                    Días Racha
+            {/* NÚMEROS */}
+            <div className="flex flex-col items-center relative -mt-4">
+                <h2 className="text-5xl font-black text-white drop-shadow-[0_4px_8px_rgba(0,0,0,1)]">
+                    {/* 👇 ACÁ ESTABA EL ERROR: Cambiamos streak por displayStreak */}
+                    {displayStreak}
+                </h2>
+                <p className="text-xs font-bold text-white/90 uppercase tracking-[0.2em] drop-shadow-[0_2px_4px_rgba(0,0,0,1)] mt-1">
+                    {streak === 1 ? 'Día Racha' : 'Días Racha'}
                 </p>
             </div>
+
         </div>
     )
 }

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from 'sonner'
 import BottomNav from "@/components/ui/BottomNav";
+import { SoundProvider } from "@/components/ui/SoundContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,16 +54,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <BottomNav />
-        <Toaster
-          position="bottom-left"  // Abajo a la izquierda
-          offset="120px"          // <--- IMPORTANTE: Esto las levanta por encima del menú
-          visibleToasts={3}       // Solo muestra 2 a la vez (para no tapar la pantalla)
-          richColors              // Colores lindos (Verde/Rojo)
-          theme="dark"            // Tema oscuro
-          closeButton             // (Opcional) Agrega una X pequeña para cerrar
-        />
+        <SoundProvider>
+          {children}
+          <BottomNav />
+          <Toaster
+            position="bottom-left"  // Abajo a la izquierda
+            offset="120px"          // <--- IMPORTANTE: Esto las levanta por encima del menú
+            visibleToasts={3}       // Solo muestra 2 a la vez (para no tapar la pantalla)
+            richColors              // Colores lindos (Verde/Rojo)
+            theme="dark"            // Tema oscuro
+            closeButton             // (Opcional) Agrega una X pequeña para cerrar
+          />
+        </SoundProvider>
       </body>
     </html>
   );

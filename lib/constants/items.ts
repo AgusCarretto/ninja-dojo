@@ -1,69 +1,158 @@
 export interface ShopItem {
     id: string
     name: string
-    type: 'background' | 'mat' | 'decoration' // Tipos de objetos
+    type: 'background' | 'mat' | 'relic' | 'artifact' // 🔥 ACTUALIZADO: Agregamos relic y artifact
     price: number
     description: string
-    image: string // Por ahora usaremos colores o emojis, luego URLs reales
-    cssClass?: string // Para aplicar estilos tailwind directos
+    image: string // Emoji para la UI de la tienda
+    cssClass?: string // Opcional por si en algún momento querés mezclar CSS con la imagen
+    imageUrl?: string // 🔥 La ruta real de la imagen para el motor 2D
+    requiredLevel?: number
 }
 
 export const SHOP_ITEMS: ShopItem[] = [
-    // --- FONDOS ---
+    // ==========================================
+    // 🌌 CAPA 0: FONDOS (Backgrounds)
+    // ==========================================
     {
-        id: 'bg_default',
-        name: 'Dojo Básico',
+        id: 'bg_mountain',
+        name: 'Amanecer en la Montaña',
         type: 'background',
         price: 0,
-        description: 'El inicio de todo camino.',
-        image: '🌑',
-        cssClass: 'bg-zinc-900'
+        description: 'El inicio de todo camino. Un amanecer que inspira disciplina.',
+        image: '🌄',
+        imageUrl: '/shop/backgrounds/bg_mountain.jpg'
     },
     {
         id: 'bg_forest',
-        name: 'Bosque de Bambú',
+        name: 'Bosque de Bambú Nocturno',
         type: 'background',
-        price: 50,
-        description: 'Entrena bajo la paz de la naturaleza.',
+        price: 300,
+        description: 'Entrena bajo la luz de la luna y la paz de la naturaleza.',
         image: '🎍',
-        cssClass: 'bg-gradient-to-b from-green-900 to-zinc-900'
+        imageUrl: '/shop/backgrounds/bg_forest.jpg',
+        requiredLevel: 5
     },
     {
-        id: 'bg_volcano',
-        name: 'Volcán Activo',
+        id: 'bg_temple_fire',
+        name: 'Templo en Llamas',
         type: 'background',
-        price: 200,
-        description: 'Solo para guerreros resistentes al calor.',
+        price: 1000,
+        description: 'El calor de la batalla. Solo para guerreros de élite.',
         image: '🌋',
-        cssClass: 'bg-gradient-to-b from-red-900 to-orange-900'
-    },
-    {
-        id: 'bg_cyber',
-        name: 'Cyber Dojo',
-        type: 'background',
-        price: 500,
-        description: 'Alta tecnología para entrenar tu mente.',
-        image: '🤖',
-        cssClass: 'bg-gradient-to-b from-blue-900 to-purple-900'
+        imageUrl: '/shop/backgrounds/bg_temple_fire.jpg',
+        requiredLevel: 10
     },
 
-    // --- MATS (Piso donde está el fuego) ---
+    // ==========================================
+    // 🪨 CAPA 3: TATAMIS (Bases para la llama)
+    // ==========================================
     {
-        id: 'mat_default',
-        name: 'Tatami Viejo',
+        id: 'mat_default', // Mantenemos este ID por compatibilidad si alguien ya lo equipó
+        name: 'Madera de Roble',
         type: 'mat',
         price: 0,
-        description: 'Tiene historia.',
-        image: '🟫',
-        cssClass: 'bg-transparent'
+        description: 'Madera resistente y gastada por el entrenamiento.',
+        image: '🪵',
+        imageUrl: '/shop/mats/mat_wood-modified.png'
+
     },
     {
-        id: 'mat_gold',
-        name: 'Tatami Real',
+        id: 'mat_jade',
+        name: 'Losa de Jade',
         type: 'mat',
+        price: 400,
+        description: 'Piedra preciosa que concentra la energía del dojo.',
+        image: '🟩',
+        imageUrl: '/shop/mats/mat_jade-modified.png',
+        requiredLevel: 3
+    },
+    {
+        id: 'mat_obsidian',
+        name: 'Cráter de Obsidiana',
+        type: 'mat',
+        price: 1200,
+        description: 'Roca volcánica con magma en su interior.',
+        image: '🪨',
+        imageUrl: '/shop/mats/mat_obsidian-modified (1).png',
+        requiredLevel: 7
+    },
+
+    // ==========================================
+    // ⚔️ CAPA 1: RELIQUIAS DE PARED (Fondo arriba)
+    // ==========================================
+    {
+        id: 'relic_katanas',
+        name: 'Katanas del Novato',
+        type: 'relic',
         price: 150,
-        description: 'Tejido con hilos de oro.',
-        image: '✨',
-        cssClass: 'bg-transparent'
+        description: 'Dos espadas cruzadas listas para el combate.',
+        image: '⚔️',
+        imageUrl: '/shop/relics/relic_katanas-modified.png',
+        requiredLevel: 2
+    },
+    {
+        id: 'relic_katana_onehanded',
+        name: 'Katana de una mano',
+        type: 'relic',
+        price: 220,
+        description: 'Una katana de una mano listas para el combate.',
+        image: '⚔️',
+        imageUrl: '/shop/relics/relic_katana_onehand-modified.png',
+        requiredLevel: 4
+    },
+    {
+        id: 'relic_mask',
+        name: 'Máscara Oni',
+        type: 'relic',
+        price: 600,
+        description: 'Una máscara tradicional para ahuyentar a los malos espíritus.',
+        image: '👹',
+        imageUrl: '/shop/relics/relic_mask-modified.png',
+        requiredLevel: 6
+    },
+    {
+        id: 'relic_dragon',
+        name: 'Estandarte Dorado',
+        type: 'relic',
+        price: 1500,
+        description: 'El emblema definitivo del clan dragón.',
+        image: '🐉',
+        imageUrl: '/shop/relics/relic_dragon-modified.png',
+        requiredLevel: 10
+    },
+
+    // ==========================================
+    // 🏮 CAPA 2: ARTEFACTOS LATERALES (Esquina)
+    // ==========================================
+    {
+        id: 'artifact_lantern',
+        name: 'Farol de Papel',
+        type: 'artifact',
+        price: 100,
+        description: 'Ilumina los rincones más oscuros de tu mente.',
+        image: '🏮',
+        imageUrl: '/shop/artifacts/artifact_lantern-modified.png',
+        requiredLevel: 2
+    },
+    {
+        id: 'artifact_bonsai',
+        name: 'Bonsái Milenario',
+        type: 'artifact',
+        price: 350,
+        description: 'La paciencia materializada en una planta.',
+        image: '🌳',
+        imageUrl: '/shop/artifacts/artifact_bonsai-modified.png',
+        requiredLevel: 4
+    },
+    {
+        id: 'artifact_incense',
+        name: 'Incensario Místico',
+        type: 'artifact',
+        price: 800,
+        description: 'Humo purificador que calma el espíritu.',
+        image: '💨',
+        imageUrl: '/shop/artifacts/artifact_incense.png',
+        requiredLevel: 8
     }
 ]

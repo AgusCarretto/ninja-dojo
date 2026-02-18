@@ -9,6 +9,8 @@ import confetti from 'canvas-confetti'
 import { toast } from 'sonner'
 import NewTaskModal from './NewTaskModal'
 import DeleteAlert from './DeleteAlert'
+// @ts-ignore
+import useSound from 'use-sound'
 
 // Mapeo de iconos
 const attributeIcons: any = {
@@ -32,6 +34,7 @@ export default function TaskItem({ task }: { task: any }) {
     const router = useRouter()
     const supabase = createClient()
     const AttrIcon = attributeIcons[task.attribute] || Sword
+    const [playGong] = useSound('/sounds/gong.mp3')
 
     const handleComplete = async () => {
         setIsCompleting(true)
@@ -49,6 +52,7 @@ export default function TaskItem({ task }: { task: any }) {
         try {
             const { error } = await supabase.rpc('complete_task', { task_id: task.id })
             if (error) throw error
+            playGong()
             toast.success(`+${task.is_boss ? 50 : 10} XP en ${task.attribute}!`)
             router.refresh()
         } catch (error) {

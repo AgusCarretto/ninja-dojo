@@ -1,5 +1,4 @@
 'use client'
-
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { LogOut } from 'lucide-react'
@@ -9,24 +8,24 @@ export default function SignOutButton() {
     const router = useRouter()
     const supabase = createClient()
 
-    const handleLogout = async () => {
-        const { error } = await supabase.auth.signOut()
+    const handleSignOut = async () => {
+        // 1. Cerramos sesión en la base de datos
+        await supabase.auth.signOut()
 
-        if (error) {
-            toast.error('Error al salir')
-        } else {
-            toast.success('Has salido del Dojo')
-            router.refresh() // Esto fuerza a la página a recargar y detectar que no hay usuario
-        }
+        // 2. Mostramos el mensaje
+        toast.success('Sesión cerrada. ¡Vuelve pronto!')
+
+        // 3. Redirigimos al Login
+        router.push('/login')
+
+        // 4. MÁGIA: Obligamos a Next.js a limpiar la caché y recargar los Server Components
+        router.refresh()
     }
 
     return (
-        <button
-            onClick={handleLogout}
-            className="p-2 bg-surface border border-white/10 rounded-full text-text-secondary hover:text-red-500 hover:border-red-500/50 transition-colors"
-            title="Cerrar Sesión"
-        >
+        <button onClick={handleSignOut} className="flex items-center gap-2 text-red-500 hover:text-red-400">
             <LogOut size={18} />
+
         </button>
     )
 }

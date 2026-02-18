@@ -27,11 +27,7 @@ export default function BottomNav() {
             href: '/social',
             icon: Users,
         },
-        {
-            name: 'Stats',
-            href: '/stats',
-            icon: ChartBar,
-        },
+
         {
             name: 'Shop',
             href: '/shop',

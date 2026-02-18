@@ -131,7 +131,7 @@ export default function SocialPage() {
         }
     }
 
-    if (loading) return <DojoLoader />
+    if (loading) return <DojoLoader text="Buscando señales del Clan..." />
 
     return (
         <main className="min-h-screen bg-background text-white pb-24">
