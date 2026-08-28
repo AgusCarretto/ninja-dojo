@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { SHOP_ITEMS, ShopItem } from '@/lib/constants/items'
-import { Coins, Lock, CheckCircle2, ShoppingBag, LayoutGrid, Image as ImageIcon, Shield, Lamp } from 'lucide-react'
+import { Coins, Lock, CheckCircle2, ShoppingBag, LayoutGrid, Image as ImageIcon, Shield, Lamp, Sparkles } from 'lucide-react'
 import TopUserBar from '@/components/ui/TopUserBar'
 import DojoLoader from '@/components/ui/DojoLoader'
 import Image from 'next/image'
 import { toast } from 'sonner'
-import type { Profile } from '@/lib/types'
+import type { EquippedItems, Profile } from '@/lib/types'
 
-type Category = 'background' | 'mat' | 'relic' | 'artifact'
+type Category = 'background' | 'mat' | 'relic' | 'artifact' | 'consumable'
 
 export default function ShopPage() {
     const [profile, setProfile] = useState<Profile | null>(null)
@@ -44,35 +44,23 @@ export default function ShopPage() {
     }
 
     const isEquipped = (item: ShopItem) => {
-        return profile?.equipped?.[item.type] === item.id
+        if (item.category === 'consumable') return false
+        return profile?.equipped?.[item.type as keyof EquippedItems] === item.id
     }
 
     const handleBuy = async (item: ShopItem) => {
         if (!profile) return
-        if (profile.gold < item.price) {
-            toast.error('No tienes suficiente oro, guerrero.')
-            return
-        }
 
         setActionLoading(item.id)
         try {
-            const newGold = profile.gold - item.price
-            const newPurchased = [...(profile.purchased_items || []), item.id]
-
-            const { error } = await supabase
-                .from('profiles')
-                .update({ gold: newGold, purchased_items: newPurchased })
-                .eq('id', profile.id)
-
+            const { error } = await supabase.rpc('buy_item', { item_id: item.id })
             if (error) throw error
 
-            setProfile({ ...profile, gold: newGold, purchased_items: newPurchased })
+            await fetchProfile()
             toast.success(`¡Has adquirido: ${item.name}!`, { icon: '🛍️' })
-
-            // Acá tu Agente seguro metió el sonido de kaching, ¡dejalo si lo tenías!
-
         } catch (error) {
-            toast.error('El mercader rechazó la transacción.')
+            const message = error instanceof Error ? error.message : 'El mercader rechazó la transacción.'
+            toast.error(message)
         } finally {
             setActionLoading(null)
         }
@@ -82,22 +70,14 @@ export default function ShopPage() {
         if (!profile) return
         setActionLoading(item.id)
         try {
-            const newEquipped = { ...(profile.equipped || {}), [item.type]: item.id }
-
-            const { error } = await supabase
-                .from('profiles')
-                .update({ equipped: newEquipped })
-                .eq('id', profile.id)
-
+            const { error } = await supabase.rpc('equip_item', { slot: item.type, item_id: item.id })
             if (error) throw error
 
-            setProfile({ ...profile, equipped: newEquipped })
+            await fetchProfile()
             toast.success(`${item.name} equipado en tu Dojo.`, { icon: '⛩️' })
-
-            // Acá tu Agente seguro metió el sonido de shwing, ¡dejalo!
-
         } catch (error) {
-            toast.error('Error al intentar equipar el objeto.')
+            const message = error instanceof Error ? error.message : 'Error al intentar equipar el objeto.'
+            toast.error(message)
         } finally {
             setActionLoading(null)
         }
@@ -113,7 +93,10 @@ export default function ShopPage() {
         { id: 'mat', label: 'Tatamis', icon: <LayoutGrid size={16} /> },
         { id: 'relic', label: 'Reliquias', icon: <Shield size={16} /> },
         { id: 'artifact', label: 'Artefactos', icon: <Lamp size={16} /> },
+        { id: 'consumable', label: 'Amuletos', icon: <Sparkles size={16} /> },
     ]
+
+    const activeShields = profile.streak_shields || 0
 
     return (
         <main className="min-h-screen bg-background text-white pb-24">
@@ -199,7 +182,25 @@ export default function ShopPage() {
                                 </div>
 
                                 <div className="mt-auto">
-                                    {owned ? (
+                                    {item.category === 'consumable' ? (
+                                        activeShields >= 1 ? (
+                                            <div className="w-full py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm uppercase bg-white/5 text-text-secondary">
+                                                <CheckCircle2 size={18} /> Amuleto Activo
+                                            </div>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleBuy(item)}
+                                                disabled={!canAfford || isProcessing}
+                                                className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all
+                        ${canAfford
+                                                        ? 'bg-amber-500 text-black hover:bg-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                                                        : 'bg-red-500/10 text-red-500 border border-red-500/20 cursor-not-allowed'}`}
+                                            >
+                                                <Coins size={18} className={canAfford ? "text-black" : "text-red-500"} />
+                                                {isProcessing ? 'Comprando...' : canAfford ? `Comprar por ${item.price}` : `Faltan ${item.price - profile.gold} de Oro`}
+                                            </button>
+                                        )
+                                    ) : owned ? (
                                         <button
                                             onClick={() => handleEquip(item)}
                                             disabled={equipped || isProcessing}

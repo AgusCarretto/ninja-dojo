@@ -15,6 +15,7 @@ export interface Profile {
     xp: number
     gold: number
     streak_count: number
+    streak_shields: number
     str_points: number
     int_points: number
     dex_points: number

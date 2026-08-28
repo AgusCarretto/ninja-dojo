@@ -3,7 +3,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import StreakLostModal from './StreakLostModal' // <--- Importamos el modal nuevo
+
+interface StreakCheckResult {
+    lost: boolean
+    shielded: boolean
+}
 
 export default function StreakWatcher() {
     const router = useRouter()
@@ -17,11 +23,17 @@ export default function StreakWatcher() {
             hasChecked.current = true
 
             try {
-                const { data: lostStreak, error } = await supabase.rpc('check_streak_lost')
+                const { data, error } = await supabase.rpc('check_streak_lost')
+                const result = data as StreakCheckResult | null
 
                 if (error) throw error
 
-                if (lostStreak) {
+                if (result?.shielded) {
+                    // El amuleto absorbió el golpe: la racha sigue viva
+                    if (navigator.vibrate) navigator.vibrate([80])
+                    toast.success('Tu amuleto absorbió el golpe. La racha sigue viva.', { icon: '🛡️' })
+                    router.refresh()
+                } else if (result?.lost) {
                     // 1. Vibración larga y triste
                     if (navigator.vibrate) navigator.vibrate([200, 100, 200])
 

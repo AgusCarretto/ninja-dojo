@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import GoldDisplay from '@/components/dojo/GoldDisplay'
 import SignOutButton from '@/components/ui/SignOutButton'
-import { Volume2, VolumeX, User as UserIcon } from 'lucide-react'
+import { Volume2, VolumeX, User as UserIcon, Sparkles } from 'lucide-react'
 import { useSoundContext } from './SoundContext'
 import ProfileModal from './ProfileModal'
 import { PROFILE_TITLES } from '@/lib/constants/titles'
@@ -68,6 +68,14 @@ export default function TopUserBar({ profile }: TopUserBarProps) {
 
                     {/* Lado Derecho: Oro, Sonido y Salir */}
                     <div className="flex items-center gap-3">
+                        {(profile?.streak_shields || 0) > 0 && (
+                            <div
+                                title="Amuleto de Persistencia activo"
+                                className="flex items-center gap-1 bg-surface border border-primary/20 px-2 py-1.5 rounded-full text-primary"
+                            >
+                                <Sparkles size={16} />
+                            </div>
+                        )}
                         <SoundToggle />
                         <GoldDisplay amount={profile?.gold || 0} />
                         <SignOutButton />
