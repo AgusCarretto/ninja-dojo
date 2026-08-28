@@ -65,8 +65,9 @@ export default function LoginPage() {
                 toast.success('Bienvenido de nuevo, guerrero')
                 router.push('/')
             }
-        } catch (error: any) {
-            toast.error('Error de acceso', { description: error.message })
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Ocurrió un error inesperado'
+            toast.error('Error de acceso', { description: message })
         } finally {
             setLoading(false)
         }

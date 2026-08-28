@@ -4,12 +4,13 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TaskItem from './TaskItem'
 import { Sword, Book, Zap, Brain, Users, Layers } from 'lucide-react'
+import type { Task } from '@/lib/types'
 
 // Definimos los tipos de filtro
 type FilterType = 'ALL' | 'STR' | 'INT' | 'DEX' | 'WIS' | 'CHA'
 
 interface MissionBoardProps {
-    initialTasks: any[] // Recibimos las tareas desde el servidor
+    initialTasks: Task[] // Recibimos las tareas desde el servidor
 }
 
 export default function MissionBoard({ initialTasks }: MissionBoardProps) {

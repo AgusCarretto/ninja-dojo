@@ -9,11 +9,12 @@ import confetti from 'canvas-confetti'
 import { toast } from 'sonner'
 import NewTaskModal from './NewTaskModal'
 import DeleteAlert from './DeleteAlert'
-// @ts-ignore
 import useSound from 'use-sound'
+import type { Task, Attribute } from '@/lib/types'
+import type { LucideIcon } from 'lucide-react'
 
 // Mapeo de iconos
-const attributeIcons: any = {
+const attributeIcons: Record<Attribute, LucideIcon> = {
     STR: Sword, INT: Book, DEX: Zap, WIS: Brain, CHA: Users,
 }
 
@@ -26,7 +27,7 @@ const borderColors: Record<string, string> = {
     CHA: 'border-pink-500/50 hover:border-pink-500',    // Carisma: Rosa
 }
 
-export default function TaskItem({ task }: { task: any }) {
+export default function TaskItem({ task }: { task: Task }) {
     const [isCompleting, setIsCompleting] = useState(false)
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -41,7 +42,7 @@ export default function TaskItem({ task }: { task: any }) {
         if (navigator.vibrate) navigator.vibrate([50, 50, 50])
 
         // Confeti con colores según atributo
-        const colorMap: any = { STR: '#ef4444', INT: '#3b82f6', DEX: '#eab308', WIS: '#a855f7', CHA: '#ec4899' }
+        const colorMap: Record<Attribute, string> = { STR: '#ef4444', INT: '#3b82f6', DEX: '#eab308', WIS: '#a855f7', CHA: '#ec4899' }
         confetti({
             particleCount: 50,
             spread: 60,
@@ -94,7 +95,9 @@ export default function TaskItem({ task }: { task: any }) {
                 {/* Botón Check */}
                 <button
                     onClick={handleComplete}
-                    className={`flex-shrink-0 h-8 w-8 rounded-full border-2 flex items-center justify-center transition-all ${task.is_boss
+                    disabled={isCompleting}
+                    aria-label={`Completar misión: ${task.title}`}
+                    className={`flex-shrink-0 h-8 w-8 rounded-full border-2 flex items-center justify-center transition-all disabled:opacity-50 ${task.is_boss
                         ? 'border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
                         : 'border-white/20 text-transparent hover:border-primary hover:text-primary'
                         }`}
@@ -103,7 +106,12 @@ export default function TaskItem({ task }: { task: any }) {
                 </button>
 
                 {/* Info (Click para editar) */}
-                <div className="flex-1 min-w-0" onClick={() => setIsEditOpen(true)}>
+                <button
+                    type="button"
+                    onClick={() => setIsEditOpen(true)}
+                    aria-label={`Editar misión: ${task.title}`}
+                    className="flex-1 min-w-0 text-left"
+                >
                     <div className="flex items-center gap-2 mb-1">
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${task.is_boss ? 'bg-red-500 text-white' : 'bg-white/10 text-text-secondary'
                             }`}>
@@ -114,12 +122,13 @@ export default function TaskItem({ task }: { task: any }) {
                     <h3 className={`font-medium truncate cursor-pointer hover:text-primary transition-colors ${task.is_boss ? 'text-red-100 text-lg' : 'text-text-primary'}`}>
                         {task.title}
                     </h3>
-                </div>
+                </button>
 
                 {/* Acciones (Editar / Borrar) */}
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsEditOpen(true)}
+                        aria-label={`Editar misión: ${task.title}`}
                         className="p-2 text-text-secondary hover:text-primary hover:bg-white/5 rounded-full transition-colors"
                     >
                         <Pencil size={16} />
@@ -127,6 +136,7 @@ export default function TaskItem({ task }: { task: any }) {
 
                     <button
                         onClick={handleDeleteClick}
+                        aria-label={`Borrar misión: ${task.title}`}
                         className="p-2 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
                     >
                         <Trash2 size={16} />

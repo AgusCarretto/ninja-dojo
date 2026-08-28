@@ -4,15 +4,16 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { Loader2, ScrollText, Send, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import type { Scroll } from '@/lib/types'
 
 interface ScrollWallProps {
     dojoOwnerId: string;
-    currentUserId: string;
+    currentUserId?: string;
     isSelf: boolean;
 }
 
 export default function ScrollWall({ dojoOwnerId, currentUserId, isSelf }: ScrollWallProps) {
-    const [scrolls, setScrolls] = useState<any[]>([])
+    const [scrolls, setScrolls] = useState<Scroll[]>([])
     const [newScroll, setNewScroll] = useState('')
     const [sendingScroll, setSendingScroll] = useState(false)
 
@@ -29,7 +30,9 @@ export default function ScrollWall({ dojoOwnerId, currentUserId, isSelf }: Scrol
                 .order('created_at', { ascending: false })
                 .limit(20)
 
-            setScrolls(data || [])
+            // Sin tipos generados de Supabase, el join `sender:profiles!sender_id(...)`
+            // se infiere como array aunque en runtime siempre es un solo objeto (FK 1:1).
+            setScrolls((data as unknown as Scroll[]) || [])
         }
 
         fetchScrolls()
@@ -53,7 +56,7 @@ export default function ScrollWall({ dojoOwnerId, currentUserId, isSelf }: Scrol
 
             if (error) throw error
 
-            setScrolls(prev => [insertedScroll, ...prev])
+            setScrolls(prev => [insertedScroll as unknown as Scroll, ...prev])
             setNewScroll('')
             toast.success('Pergamino colgado en el muro.')
         } catch (err) {

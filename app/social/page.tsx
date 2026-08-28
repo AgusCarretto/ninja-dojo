@@ -9,18 +9,19 @@ import { toast } from 'sonner'
 import { Trophy } from 'lucide-react'
 import Link from 'next/link'
 import { Eye } from 'lucide-react'
+import type { Profile, PublicProfile, LeaderboardEntry, FriendRequest } from '@/lib/types'
 
 export default function SocialPage() {
     const [activeTab, setActiveTab] = useState<'friends' | 'inbox' | 'ranking'>('friends')
-    const [profile, setProfile] = useState<any>(null)
+    const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
-    const [leaderboard, setLeaderboard] = useState<any[]>([])
+    const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
 
     // Estados para búsqueda y listas
     const [searchTerm, setSearchTerm] = useState('')
-    const [searchResults, setSearchResults] = useState<any[]>([])
-    const [friends, setFriends] = useState<any[]>([])
-    const [requests, setRequests] = useState<any[]>([])
+    const [searchResults, setSearchResults] = useState<PublicProfile[]>([])
+    const [friends, setFriends] = useState<PublicProfile[]>([])
+    const [requests, setRequests] = useState<FriendRequest[]>([])
 
     const supabase = createClient()
 
@@ -47,7 +48,9 @@ export default function SocialPage() {
                 .eq('receiver_id', user.id)
                 .eq('status', 'pending')
 
-            setRequests(pending || [])
+            // Sin tipos generados de Supabase, el join `sender:profiles!sender_id(...)`
+            // se infiere como array aunque en runtime siempre es un solo objeto (FK 1:1).
+            setRequests((pending as unknown as FriendRequest[]) || [])
 
             // 3. Obtener Amigos (Accepted) - Es complejo porque puedo ser sender O receiver
             // Por simplicidad en este MVP, hacemos dos queries y unimos, o usamos una View luego.
@@ -65,9 +68,10 @@ export default function SocialPage() {
                 .eq('status', 'accepted')
 
             // Unificamos la lista de amigos
-            const friendsList = [
-                ...(sent?.map(r => r.receiver) || []),
-                ...(received?.map(r => r.sender) || [])
+            // (mismo caveat de tipos que arriba: el join se infiere como array)
+            const friendsList: PublicProfile[] = [
+                ...(sent?.map(r => r.receiver as unknown as PublicProfile) || []),
+                ...(received?.map(r => r.sender as unknown as PublicProfile) || [])
             ]
             setFriends(friendsList)
 

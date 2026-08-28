@@ -23,9 +23,8 @@ export default function SignOutButton() {
     }
 
     return (
-        <button onClick={handleSignOut} className="flex items-center gap-2 text-red-500 hover:text-red-400">
+        <button onClick={handleSignOut} aria-label="Cerrar sesión" className="flex items-center gap-2 text-red-500 hover:text-red-400">
             <LogOut size={18} />
-
         </button>
     )
 }

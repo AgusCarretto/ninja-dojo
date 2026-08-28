@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, useRef } from "react";
-// @ts-ignore
 import useSound from "use-sound";
 
 interface SoundContextType {

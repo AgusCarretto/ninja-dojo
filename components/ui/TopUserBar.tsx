@@ -8,6 +8,7 @@ import { Volume2, VolumeX, User as UserIcon } from 'lucide-react'
 import { useSoundContext } from './SoundContext'
 import ProfileModal from './ProfileModal'
 import { PROFILE_TITLES } from '@/lib/constants/titles'
+import type { Profile } from '@/lib/types'
 
 function SoundToggle() {
     const { isMuted, toggleMute } = useSoundContext()
@@ -24,7 +25,7 @@ function SoundToggle() {
 }
 
 interface TopUserBarProps {
-    profile: any
+    profile: Profile | null
 }
 
 export default function TopUserBar({ profile }: TopUserBarProps) {
@@ -44,9 +45,11 @@ export default function TopUserBar({ profile }: TopUserBarProps) {
             <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-white/5">
                 <div className="px-6 py-4 flex justify-between items-center">
                     {/* Lado Izquierdo: Info Usuario (Clickable) */}
-                    <div
+                    <button
+                        type="button"
                         onClick={() => setIsProfileOpen(true)}
-                        className="flex items-center gap-3 cursor-pointer group"
+                        aria-label="Abrir perfil"
+                        className="flex items-center gap-3 cursor-pointer group text-left"
                     >
                         {/* Avatar */}
                         <div className="w-10 h-10 rounded-full bg-surface border border-white/10 flex items-center justify-center text-primary group-hover:border-primary/50 transition-colors">
@@ -61,7 +64,7 @@ export default function TopUserBar({ profile }: TopUserBarProps) {
                                 {currentTitle?.name || 'Novato'}
                             </p>
                         </div>
-                    </div>
+                    </button>
 
                     {/* Lado Derecho: Oro, Sonido y Salir */}
                     <div className="flex items-center gap-3">

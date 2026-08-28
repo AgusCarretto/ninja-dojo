@@ -72,6 +72,7 @@ export default function LevelUpModal({ currentLevel }: LevelUpModalProps) {
                 {/* Botón de cerrar */}
                 <button
                     onClick={() => setIsOpen(false)}
+                    aria-label="Cerrar"
                     className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors"
                 >
                     <X size={24} />

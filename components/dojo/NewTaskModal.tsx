@@ -6,16 +6,17 @@ import { X, Sword, Book, Zap, Brain, Users, Crown, Save } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import type { Task, Attribute } from '@/lib/types'
 
 interface NewTaskModalProps {
     isOpen: boolean
     onClose: () => void
-    taskToEdit?: any // Prop opcional: Si viene, es edición
+    taskToEdit?: Task // Prop opcional: Si viene, es edición
 }
 
 export default function NewTaskModal({ isOpen, onClose, taskToEdit }: NewTaskModalProps) {
     const [title, setTitle] = useState('')
-    const [attribute, setAttribute] = useState('STR')
+    const [attribute, setAttribute] = useState<Attribute>('STR')
     const [isBoss, setIsBoss] = useState(false)
     const [loading, setLoading] = useState(false)
 
@@ -36,7 +37,7 @@ export default function NewTaskModal({ isOpen, onClose, taskToEdit }: NewTaskMod
         }
     }, [taskToEdit, isOpen]) // Se ejecuta cuando abrimos el modal
 
-    const attributes = [
+    const attributes: { id: Attribute, label: string, icon: typeof Sword, color: string, bg: string }[] = [
         { id: 'STR', label: 'Fuerza', icon: Sword, color: 'text-red-500', bg: 'bg-red-500/10' },
         { id: 'INT', label: 'Intelecto', icon: Book, color: 'text-blue-500', bg: 'bg-blue-500/10' },
         { id: 'DEX', label: 'Destreza', icon: Zap, color: 'text-yellow-500', bg: 'bg-yellow-500/10' },
@@ -98,7 +99,7 @@ export default function NewTaskModal({ isOpen, onClose, taskToEdit }: NewTaskMod
                             <h2 className="text-xl font-bold text-white">
                                 {taskToEdit ? 'Editar Misión' : 'Nueva Misión'}
                             </h2>
-                            <button onClick={onClose} className="p-2 bg-white/5 rounded-full text-text-secondary">
+                            <button onClick={onClose} aria-label="Cerrar" className="p-2 bg-white/5 rounded-full text-text-secondary">
                                 <X size={20} />
                             </button>
                         </div>
@@ -138,9 +139,12 @@ export default function NewTaskModal({ isOpen, onClose, taskToEdit }: NewTaskMod
                             </div>
 
                             {/* Boss Switch */}
-                            <div
+                            <button
+                                type="button"
+                                role="switch"
+                                aria-checked={isBoss}
                                 onClick={() => setIsBoss(!isBoss)}
-                                className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all ${isBoss ? 'bg-red-500/20 border-red-500' : 'bg-background border-white/5'
+                                className={`w-full flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all text-left ${isBoss ? 'bg-red-500/20 border-red-500' : 'bg-background border-white/5'
                                     }`}
                             >
                                 <div className="flex items-center gap-3">
@@ -151,7 +155,7 @@ export default function NewTaskModal({ isOpen, onClose, taskToEdit }: NewTaskMod
                                         <p className={`font-bold ${isBoss ? 'text-red-400' : 'text-text-primary'}`}>Es un BOSS</p>
                                     </div>
                                 </div>
-                            </div>
+                            </button>
 
                             <button
                                 disabled={loading}

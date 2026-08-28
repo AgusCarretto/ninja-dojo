@@ -10,12 +10,16 @@ import Image from 'next/image'
 import { SHOP_ITEMS } from '@/lib/constants/items'
 import ScrollWall from '@/components/dojo/ScrollWall'
 import StreakFlame from '@/components/dojo/StreakFlame'
+import type { User } from '@supabase/supabase-js'
+import type { Profile } from '@/lib/types'
+
+type PublicDojoProfile = Pick<Profile, 'id' | 'username' | 'level' | 'streak_count' | 'equipped' | 'avatar_url'>
 
 export default function PublicDojoPage() {
     const { username } = useParams()
     const router = useRouter()
-    const [profile, setProfile] = useState<any>(null)
-    const [currentUser, setCurrentUser] = useState<any>(null)
+    const [profile, setProfile] = useState<PublicDojoProfile | null>(null)
+    const [currentUser, setCurrentUser] = useState<User | null>(null)
 
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState(false)
@@ -61,7 +65,7 @@ export default function PublicDojoPage() {
     }, [username, router, supabase])
 
     const handleGiveHonor = async () => {
-        if (isSelf || alreadyGiven || honorsLeft <= 0 || actionLoading) return
+        if (!profile || isSelf || alreadyGiven || honorsLeft <= 0 || actionLoading) return
         setActionLoading(true)
         try {
             const { data, error } = await supabase.rpc('give_honor', { target_user_id: profile.id })
@@ -85,6 +89,7 @@ export default function PublicDojoPage() {
     }
 
     if (loading) return <DojoLoader text={`Viajando al dojo de ${decodeURIComponent(username as string)}...`} />
+    if (!profile) return null
 
     const bgItem = SHOP_ITEMS.find(i => i.id === profile?.equipped?.background) || SHOP_ITEMS.find(i => i.id === 'bg_mountain')
     const matItem = SHOP_ITEMS.find(i => i.id === profile?.equipped?.mat) || SHOP_ITEMS.find(i => i.id === 'mat_default')
@@ -100,6 +105,7 @@ export default function PublicDojoPage() {
                 <header className="absolute top-0 w-full p-4 flex justify-between items-start z-50">
                     <button
                         onClick={() => router.back()}
+                        aria-label="Volver"
                         className="p-3 bg-black/50 backdrop-blur-md border border-white/10 rounded-full hover:bg-white/10 transition-colors"
                     >
                         <ArrowLeft size={20} />

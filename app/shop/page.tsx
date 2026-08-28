@@ -8,11 +8,12 @@ import TopUserBar from '@/components/ui/TopUserBar'
 import DojoLoader from '@/components/ui/DojoLoader'
 import Image from 'next/image'
 import { toast } from 'sonner'
+import type { Profile } from '@/lib/types'
 
 type Category = 'background' | 'mat' | 'relic' | 'artifact'
 
 export default function ShopPage() {
-    const [profile, setProfile] = useState<any>(null)
+    const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState<string | null>(null)
     const [activeCategory, setActiveCategory] = useState<Category>('background')
@@ -47,6 +48,7 @@ export default function ShopPage() {
     }
 
     const handleBuy = async (item: ShopItem) => {
+        if (!profile) return
         if (profile.gold < item.price) {
             toast.error('No tienes suficiente oro, guerrero.')
             return
@@ -77,6 +79,7 @@ export default function ShopPage() {
     }
 
     const handleEquip = async (item: ShopItem) => {
+        if (!profile) return
         setActionLoading(item.id)
         try {
             const newEquipped = { ...(profile.equipped || {}), [item.type]: item.id }
@@ -101,6 +104,7 @@ export default function ShopPage() {
     }
 
     if (loading) return <DojoLoader text="Abriendo las puertas del mercado..." />
+    if (!profile) return <DojoLoader text="No se pudo cargar tu perfil. Reintentá en unos segundos." />
 
     const filteredItems = SHOP_ITEMS.filter(item => item.type === activeCategory)
 

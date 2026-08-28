@@ -7,14 +7,14 @@ import AttributeRadar from '@/components/dojo/AttributeRadar'
 import { PROFILE_TITLES } from '@/lib/constants/titles'
 import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
-// @ts-ignore
 import useSound from 'use-sound'
+import type { Profile } from '@/lib/types'
 
 interface ProfileModalProps {
     isOpen: boolean
     onClose: () => void
-    profile: any
-    onUpdateProfile?: (newProfile: any) => void
+    profile: Profile | null
+    onUpdateProfile?: (newProfile: Profile) => void
 }
 
 type Tab = 'stats' | 'titles'
@@ -92,6 +92,7 @@ export default function ProfileModal({ isOpen, onClose, profile, onUpdateProfile
                 <div className="p-6 bg-gradient-to-b from-primary/10 to-transparent border-b border-white/5 relative">
                     <button
                         onClick={onClose}
+                        aria-label="Cerrar"
                         className="absolute top-4 right-4 p-2 text-white/50 hover:text-white transition-colors"
                     >
                         <X size={20} />
