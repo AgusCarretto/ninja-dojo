@@ -49,11 +49,12 @@ Deja la puerta abierta a poblar la tienda con más ítems más adelante (pedido 
 
 ## El fuego (`StreakFlame.tsx`)
 
-Dos piezas independientes:
+Tres piezas:
 1. **Sprite animado**: reemplaza `/fire.gif` (1.9MB, fotoreal) por una hoja pixel de 3-4 frames, animada con `steps()` — mismo estilo que el resto, y de paso baja de 1.9MB a probablemente <50KB.
 2. **Luz proyectada**: `radial-gradient` ámbar debajo/alrededor de la llama, `mix-blend-mode: screen`, con 2-3 keyframes de opacidad/escala superpuestos a distinta frecuencia (evita el pulso mecánico de un solo keyframe). Técnica CSS estándar, cero dependencias.
+3. **Chispas/embers**: `@tsparticles/react` + `@tsparticles/slim` (bundle liviano, no el engine completo) — un puñado de partículas ámbar subiendo desde la base de la llama con fade-out, cantidad atada a `streak` (más racha, más chispas, mismo criterio que ya usa `StreakFlame` para la escala). Única dependencia nueva de todo este spec; se inicializa una sola vez a nivel de la sección del dojo, no por cada instancia de `StreakFlame` (evita reinicializar el motor de partículas si el componente se remonta).
 
-**Fuera de alcance de esta v1:** partículas de chispas/embers con `tsParticles`. Es una mejora real y la libería es legítima (open source, mantenida), pero suma una dependencia y complejidad que no hace falta para que el fuego dé la sensación de iluminar — queda anotado para una vuelta futura si después de ver el resultado se siente que falta.
+**Fuera de alcance de esta v1:** afinar physics/comportamiento avanzado de tsParticles (colisiones, interactividad al tocar la pantalla) — arranca con la preset más simple de "emitir hacia arriba y desvanecer", se itera si hace falta.
 
 ## Avatares (DiceBear)
 
@@ -68,7 +69,6 @@ Un componente `components/ui/FantasyPanel.tsx` que envuelve contenido con el bor
 ## Fuera de alcance de este spec
 
 - Play Store / TWA (fase separada, ya acordada, no se toca acá).
-- tsParticles / embers (anotado arriba como mejora futura).
 - Poblar el shop con ítems nuevos más allá de los 13 actuales — este spec deja la base lista (sprite sheet + `SpriteItem`) para que eso sea rápido después, pero no agrega ítems nuevos todavía.
 - Rehacer `ScrollWall`/mecánicas sociales — solo se toca donde hoy hay un ícono de usuario genérico.
 
