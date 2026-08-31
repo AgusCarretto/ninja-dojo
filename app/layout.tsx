@@ -1,5 +1,5 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from 'sonner'
 import BottomNav from "@/components/ui/BottomNav";
@@ -16,21 +16,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Code & Dojo | Forja tu camino',
+  title: 'Mi Camino Ninja | Forja tu disciplina',
   description: 'Sube de nivel, completa misiones y mantén tu racha ardiente en el dojo.',
   // Reemplaza esto con tu dominio real donde vayas a subir el juego (ej: Vercel o tu dominio)
   metadataBase: new URL('https://agustincarretto.com'),
   openGraph: {
-    title: 'Code & Dojo | Forja tu camino',
+    title: 'Mi Camino Ninja | Forja tu disciplina',
     description: 'Únete al clan. Sube de nivel, completa tareas y forja tu disciplina diaria.',
     url: '/',
-    siteName: 'Code & Dojo',
+    siteName: 'Mi Camino Ninja',
     images: [
       {
         url: '/og-image.jpg', // Apunta directo a la imagen que pusiste en public/
         width: 1200,
         height: 630,
-        alt: 'Code & Dojo Preview',
+        alt: 'Mi Camino Ninja Preview',
       },
     ],
     locale: 'es_UY',
@@ -38,10 +38,19 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Code & Dojo | Forja tu camino',
+    title: 'Mi Camino Ninja | Forja tu disciplina',
     description: 'Sube de nivel, completa misiones y mantén tu racha ardiente.',
     images: ['/og-image.jpg'],
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#09090b',
 };
 
 export default function RootLayout({

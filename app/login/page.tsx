@@ -87,7 +87,7 @@ export default function LoginPage() {
                     <Flame size={40} className="text-primary animate-pulse" />
                 </div>
                 <h1 className="text-3xl font-black uppercase tracking-tighter text-white">
-                    Zenith Dojo
+                    Mi Camino Ninja
                 </h1>
                 <p className="text-text-secondary text-sm font-medium tracking-widest uppercase">
                     {isRegistering ? 'Inicia tu camino ninja' : 'Continúa tu legado'}

@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User, ChartBar, Award, Lock, CheckCircle2 } from 'lucide-react'
+import { X, User, ChartBar, Award, Lock, CheckCircle2, Bell, BellOff } from 'lucide-react'
 import AttributeRadar from '@/components/dojo/AttributeRadar'
 import { PROFILE_TITLES } from '@/lib/constants/titles'
 import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
 import useSound from 'use-sound'
 import type { Profile } from '@/lib/types'
+import { isPushSupported, getExistingSubscription, enablePushReminders, disablePushReminders } from '@/lib/push'
 
 interface ProfileModalProps {
     isOpen: boolean
@@ -22,8 +23,35 @@ type Tab = 'stats' | 'titles'
 export default function ProfileModal({ isOpen, onClose, profile, onUpdateProfile }: ProfileModalProps) {
     const [activeTab, setActiveTab] = useState<Tab>('stats')
     const [loading, setLoading] = useState(false)
+    const [pushEnabled, setPushEnabled] = useState<boolean | null>(null)
+    const [pushLoading, setPushLoading] = useState(false)
     const supabase = createClient()
     const [playEquip] = useSound('/sounds/shwing.mp3', { volume: 0.5 })
+
+    useEffect(() => {
+        if (!isOpen || !isPushSupported()) return
+        getExistingSubscription().then((sub) => setPushEnabled(!!sub))
+    }, [isOpen])
+
+    const handleTogglePush = async () => {
+        if (!profile) return
+        setPushLoading(true)
+        try {
+            if (pushEnabled) {
+                await disablePushReminders()
+                setPushEnabled(false)
+                toast.success('Recordatorios desactivados')
+            } else {
+                await enablePushReminders(profile.id)
+                setPushEnabled(true)
+                toast.success('¡Listo! Te vamos a avisar si tu racha corre peligro')
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'No se pudo cambiar la configuración')
+        } finally {
+            setPushLoading(false)
+        }
+    }
 
     if (!isOpen || !profile) return null
 
@@ -112,6 +140,28 @@ export default function ProfileModal({ isOpen, onClose, profile, onUpdateProfile
                         </div>
                     </div>
                 </div>
+
+                {/* Recordatorios de racha */}
+                {isPushSupported() && (
+                    <div className="flex items-center justify-between gap-3 px-6 py-3 border-b border-white/5 bg-white/[0.02]">
+                        <div className="flex items-center gap-2 text-xs text-text-secondary">
+                            {pushEnabled ? <Bell size={14} className="text-primary" /> : <BellOff size={14} />}
+                            <span>Avisarme si mi racha corre peligro</span>
+                        </div>
+                        <button
+                            onClick={handleTogglePush}
+                            disabled={pushLoading || pushEnabled === null}
+                            aria-label="Alternar recordatorios de racha"
+                            className={`relative w-10 h-6 rounded-full transition-colors disabled:opacity-40 ${pushEnabled ? 'bg-primary' : 'bg-white/10'
+                                }`}
+                        >
+                            <span
+                                className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform ${pushEnabled ? 'translate-x-4' : ''
+                                    }`}
+                            />
+                        </button>
+                    </div>
+                )}
 
                 {/* Tabs */}
                 <div className="flex border-b border-white/5">

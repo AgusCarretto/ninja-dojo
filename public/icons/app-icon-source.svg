@@ -1,0 +1,22 @@
+<!--
+  PLACEHOLDER app icon. Generated programmatically from the same flame
+  glyph used across the app (lucide-react "Flame") so it reads as "the
+  same app" until real branding/artwork replaces it.
+  Edit this file and re-run `npm run icons:generate` to regenerate the
+  PNGs consumed by app/manifest.ts and the Next.js icon/apple-icon files.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#09090b" />
+  <circle cx="256" cy="256" r="160" fill="#f59e0b" opacity="0.14" />
+  <circle cx="256" cy="256" r="132" fill="none" stroke="#f59e0b" stroke-opacity="0.35" stroke-width="6" />
+  <g transform="translate(256 268) scale(8.6) translate(-12 -12)">
+    <path
+      d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
+      fill="none"
+      stroke="#f59e0b"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>
