@@ -47,3 +47,6 @@ next-env.d.ts
 
 # investigacion de assets (zips de kenney sin curar, no se commitea)
 .asset-research/
+
+# scratch de subagent-driven-development (ledgers, briefs, reviews por plan)
+.superpowers/
