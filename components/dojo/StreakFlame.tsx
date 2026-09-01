@@ -1,7 +1,14 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { SHOP_ITEMS } from '@/lib/constants/items'
+import { getAutoFlameFilter } from '@/lib/constants/flameTiers'
 
-export default function StreakFlame({ streak }: { streak: number }) {
+interface StreakFlameProps {
+    streak: number
+    fireColorId?: string
+}
+
+export default function StreakFlame({ streak, fireColorId }: StreakFlameProps) {
     const scale = Math.min(1 + (streak * 0.02), 3)
 
     // Estado para el contador animado
@@ -28,6 +35,10 @@ export default function StreakFlame({ streak }: { streak: number }) {
         return () => clearInterval(timer)
     }, [streak])
 
+    const equippedColor = fireColorId ? SHOP_ITEMS.find(i => i.id === fireColorId && i.type === 'flame') : undefined
+    const colorFilter = equippedColor?.flameFilter ?? getAutoFlameFilter(streak)
+    const flameFilter = colorFilter ? `contrast(1.5) brightness(0.9) ${colorFilter}` : 'contrast(1.5) brightness(0.9)'
+
     return (
         <div className="flex flex-col items-center justify-end">
 
@@ -40,7 +51,8 @@ export default function StreakFlame({ streak }: { streak: number }) {
                         <img
                             src="/fire.gif"
                             alt="Llama ardiente"
-                            className="relative w-full h-full object-cover contrast-[1.5] brightness-[0.9]"
+                            className="relative w-full h-full object-cover"
+                            style={{ filter: flameFilter }}
                         />
                     </div>
                 ) : (
@@ -54,7 +66,6 @@ export default function StreakFlame({ streak }: { streak: number }) {
             {/* NÚMEROS */}
             <div className="flex flex-col items-center relative -mt-4">
                 <h2 className="text-5xl font-black text-white drop-shadow-[0_4px_8px_rgba(0,0,0,1)]">
-                    {/* 👇 ACÁ ESTABA EL ERROR: Cambiamos streak por displayStreak */}
                     {displayStreak}
                 </h2>
                 <p className="text-xs font-bold text-white/90 uppercase tracking-[0.2em] drop-shadow-[0_2px_4px_rgba(0,0,0,1)] mt-1">
