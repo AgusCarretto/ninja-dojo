@@ -4,6 +4,7 @@ import { SHOP_ITEMS } from '@/lib/constants/items'
 import ScrollWall from '@/components/dojo/ScrollWall'
 import Image from 'next/image'
 import SpriteItem from '@/components/ui/SpriteItem'
+import DojoBackground from '@/components/dojo/DojoBackground'
 
 interface DojoRoomProps {
     equipped: {
@@ -30,9 +31,9 @@ export default function DojoRoom({ equipped, children, dojoOwnerId, currentUserI
             <div className="relative w-full h-[70vh] flex items-center justify-center overflow-hidden bg-zinc-950">
 
                 {/* 1. CAPA FONDO */}
-                {bgItem?.imageUrl && (
+                {bgItem?.bgVariant && (
                     <div className="absolute inset-0">
-                        <Image src={bgItem.imageUrl} alt={bgItem.name} fill className="object-cover opacity-90" preload />
+                        <DojoBackground variant={bgItem.bgVariant} />
                         <div className="absolute inset-0 bg-black/30 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
                     </div>
                 )}

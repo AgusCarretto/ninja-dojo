@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { toast } from 'sonner'
 import type { EquippedItems, Profile } from '@/lib/types'
 import SpriteItem from '@/components/ui/SpriteItem'
+import DojoBackground from '@/components/dojo/DojoBackground'
 
 type Category = 'background' | 'mat' | 'relic' | 'artifact' | 'consumable'
 
@@ -160,7 +161,11 @@ export default function ShopPage() {
                                 )}
 
                                 <div className="w-full h-32 bg-black/40 rounded-xl mb-4 relative flex items-center justify-center overflow-hidden border border-white/5 group-hover:bg-black/60 transition-colors">
-                                    {item.sprite ? (
+                                    {item.bgVariant ? (
+                                        <div className={`absolute inset-0 ${(!owned || levelLocked) && 'opacity-50 grayscale'}`}>
+                                            <DojoBackground variant={item.bgVariant} />
+                                        </div>
+                                    ) : item.sprite ? (
                                         <SpriteItem
                                             sheet={item.sprite.sheet}
                                             x={item.sprite.x}

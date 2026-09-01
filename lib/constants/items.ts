@@ -9,6 +9,7 @@ export interface ShopItem {
     cssClass?: string // Clases CSS extra que se le suman al render (SpriteItem o Image)
     imageUrl?: string // Ruta de imagen legacy (ítems no migrados a sprite todavía)
     sprite?: { sheet: 'kenney'; x: number; y: number; w: number; h: number } // Recorte en el spritesheet pixel-art
+    bgVariant?: 'sunrise' | 'bamboo_night' | 'temple_fire' // Fondo generado por código (gradiente + silueta SVG)
     requiredLevel?: number
 }
 
@@ -24,7 +25,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 0,
         description: 'El inicio de todo camino. Un amanecer que inspira disciplina.',
         image: '🌄',
-        imageUrl: '/shop/backgrounds/bg_mountain.jpg'
+        bgVariant: 'sunrise'
     },
     {
         id: 'bg_forest',
@@ -34,7 +35,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 300,
         description: 'Entrena bajo la luz de la luna y la paz de la naturaleza.',
         image: '🎍',
-        imageUrl: '/shop/backgrounds/bg_forest.jpg',
+        bgVariant: 'bamboo_night',
         requiredLevel: 5
     },
     {
@@ -45,7 +46,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 1000,
         description: 'El calor de la batalla. Solo para guerreros de élite.',
         image: '🌋',
-        imageUrl: '/shop/backgrounds/bg_temple_fire.jpg',
+        bgVariant: 'temple_fire',
         requiredLevel: 10
     },
 

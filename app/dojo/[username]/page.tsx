@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase'
 import { ArrowLeft, Shield, Loader2 } from 'lucide-react'
 import DojoLoader from '@/components/ui/DojoLoader'
 import SpriteItem from '@/components/ui/SpriteItem'
+import DojoBackground from '@/components/dojo/DojoBackground'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { SHOP_ITEMS } from '@/lib/constants/items'
@@ -126,9 +127,9 @@ export default function PublicDojoPage() {
                 </header>
 
                 {/* 1. CAPA FONDO */}
-                {bgItem?.imageUrl && (
+                {bgItem?.bgVariant && (
                     <div className="absolute inset-0">
-                        <Image src={bgItem.imageUrl} alt={bgItem.name} fill className="object-cover opacity-90" preload />
+                        <DojoBackground variant={bgItem.bgVariant} />
                         <div className="absolute inset-0 bg-black/30 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
                     </div>
                 )}
