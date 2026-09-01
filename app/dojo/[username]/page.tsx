@@ -5,10 +5,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { ArrowLeft, Shield, Loader2 } from 'lucide-react'
 import DojoLoader from '@/components/ui/DojoLoader'
-import SpriteItem from '@/components/ui/SpriteItem'
 import DojoBackground from '@/components/dojo/DojoBackground'
 import { toast } from 'sonner'
-import Image from 'next/image'
 import { SHOP_ITEMS } from '@/lib/constants/items'
 import ScrollWall from '@/components/dojo/ScrollWall'
 import StreakFlame from '@/components/dojo/StreakFlame'
@@ -94,9 +92,6 @@ export default function PublicDojoPage() {
     if (!profile) return null
 
     const bgItem = SHOP_ITEMS.find(i => i.id === profile?.equipped?.background) || SHOP_ITEMS.find(i => i.id === 'bg_mountain')
-    const matItem = SHOP_ITEMS.find(i => i.id === profile?.equipped?.mat) || SHOP_ITEMS.find(i => i.id === 'mat_default')
-    const relicItem = SHOP_ITEMS.find(i => i.id === profile?.equipped?.relic)
-    const artifactItem = SHOP_ITEMS.find(i => i.id === profile?.equipped?.artifact)
 
     return (
         <main className="min-h-screen flex flex-col w-full bg-zinc-950 text-white">
@@ -134,72 +129,8 @@ export default function PublicDojoPage() {
                     </div>
                 )}
 
-                {/* 2. CAPA RELIQUIA */}
-                {relicItem?.sprite ? (
-                    <div className="absolute top-8 w-48 flex justify-center drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
-                        <SpriteItem
-                            sheet={relicItem.sprite.sheet}
-                            x={relicItem.sprite.x}
-                            y={relicItem.sprite.y}
-                            w={relicItem.sprite.w}
-                            h={relicItem.sprite.h}
-                            scale={4}
-                            alt={relicItem.name}
-                            className={relicItem.cssClass || ''}
-                        />
-                    </div>
-                ) : relicItem?.imageUrl && (
-                    <div className="absolute top-8 w-48 h-48 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
-                        <Image src={relicItem.imageUrl} alt={relicItem.name} fill className="object-contain" />
-                    </div>
-                )}
-
-                {/* 3. CAPA TATAMI */}
-                {matItem?.sprite ? (
-                    <div className="absolute bottom-12 drop-shadow-2xl">
-                        <SpriteItem
-                            sheet={matItem.sprite.sheet}
-                            x={matItem.sprite.x}
-                            y={matItem.sprite.y}
-                            w={matItem.sprite.w}
-                            h={matItem.sprite.h}
-                            scale={8}
-                            alt={matItem.name}
-                            className={matItem.cssClass || ''}
-                        />
-                    </div>
-                ) : matItem?.imageUrl ? (
-                    <div className="absolute bottom-12 w-[240px] h-[140px] drop-shadow-2xl">
-                        <Image src={matItem.imageUrl} alt={matItem.name} fill className="object-contain" />
-                    </div>
-                ) : (
-                    <div className={`absolute bottom-12 w-64 h-16 rounded-[100%] blur-[8px] opacity-60 shadow-2xl ${matItem?.cssClass || 'bg-amber-900/50'}`} />
-                )}
-
-                {/* 4. CAPA FUEGO (GIF ANIMADO) */}
-                <div className="absolute bottom-24 flex flex-col items-center justify-center w-full">
-                    <StreakFlame streak={profile.streak_count} />
-                </div>
-
-                {/* 5. CAPA ARTEFACTO (Izquierda) */}
-                {artifactItem?.sprite ? (
-                    <div className="absolute bottom-2 left-2 z-50 opacity-90 drop-shadow-2xl">
-                        <SpriteItem
-                            sheet={artifactItem.sprite.sheet}
-                            x={artifactItem.sprite.x}
-                            y={artifactItem.sprite.y}
-                            w={artifactItem.sprite.w}
-                            h={artifactItem.sprite.h}
-                            scale={8}
-                            alt={artifactItem.name}
-                            className={artifactItem.cssClass || ''}
-                        />
-                    </div>
-                ) : artifactItem?.imageUrl && (
-                    <div className="absolute bottom-2 left-2 w-40 h-40 z-50 opacity-90 drop-shadow-2xl">
-                        <Image src={artifactItem.imageUrl} alt={artifactItem.name} fill className="object-contain" />
-                    </div>
-                )}
+                {/* 2. CAPA FUEGO (GIF ANIMADO) */}
+                <StreakFlame streak={profile.streak_count} fireColorId={profile.equipped?.flame} />
 
                 {/* HUD BOTTOM: Botón de Honor (Derecha) */}
                 <div className="absolute bottom-4 right-4 z-50 flex flex-col items-end gap-2">

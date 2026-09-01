@@ -49,7 +49,7 @@ export default async function Home() {
           currentUserId={user.id}
           isSelf={true}
         >
-          <StreakFlame streak={currentStreak} />
+          <StreakFlame streak={currentStreak} fireColorId={profile?.equipped?.flame} />
         </DojoRoom>
         <div className="text-center space-y-2">
         </div>
