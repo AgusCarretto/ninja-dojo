@@ -4,8 +4,8 @@ const SKY: Record<BgVariant, string> = {
     sunrise: 'linear-gradient(to bottom, #1a1330 0%, #4a2145 28%, #b1483d 52%, #e8823a 72%, #f4b860 88%, #2a1f3d 100%)',
     bamboo_night: 'linear-gradient(to bottom, #0a1128 0%, #123349 35%, #1f5568 65%, #2f7a78 100%)',
     temple_fire: 'linear-gradient(to bottom, #0a0503 0%, #2b0a08 28%, #74180f 52%, #c73e1d 74%, #f2994a 90%, #1a0503 100%)',
-    starry_night: 'linear-gradient(to bottom, #0a0503 0%, #1a1a2e 50%, #0f0f1e 100%)',
-    dawn_mist: 'linear-gradient(to bottom, #1a1a2e 0%, #3d3d5c 40%, #8a7ba8 70%, #c9b8d4 100%)',
+    starry_night: 'linear-gradient(to bottom, #04050d 0%, #0a0f24 40%, #131b3a 75%, #1a2340 100%)',
+    dawn_mist: 'linear-gradient(to bottom, #332f45 0%, #5c5570 35%, #8a8296 65%, #b8aebc 100%)',
 }
 
 function Moon() {
@@ -24,7 +24,7 @@ function Moon() {
     )
 }
 
-function MountainSilhouette() {
+function MountainSilhouette({ back = '#2a2140', front = '#150f24' }: { back?: string; front?: string }) {
     return (
         <svg
             className="absolute inset-x-0 bottom-0 w-full h-[45%]"
@@ -34,11 +34,11 @@ function MountainSilhouette() {
         >
             <path
                 d="M0,200 L0,140 L100,90 L180,120 L260,70 L340,110 L420,85 L500,130 L580,95 L660,125 L740,80 L800,140 L800,200 Z"
-                fill="#2a2140"
+                fill={back}
             />
             <path
                 d="M0,200 L0,170 L80,130 L160,160 L240,110 L320,150 L400,120 L480,155 L560,115 L640,150 L720,125 L800,165 L800,200 Z"
-                fill="#150f24"
+                fill={front}
             />
         </svg>
     )
@@ -101,6 +101,30 @@ function TempleSilhouette() {
     )
 }
 
+function StarrySilhouette() {
+    const stars = [
+        { x: 40, y: 25, r: 2 }, { x: 95, y: 70, r: 1.3 }, { x: 150, y: 15, r: 1.8 },
+        { x: 210, y: 55, r: 1.3 }, { x: 270, y: 90, r: 2.2 }, { x: 330, y: 30, r: 1.5 },
+        { x: 390, y: 65, r: 1.3 }, { x: 450, y: 20, r: 2 }, { x: 510, y: 80, r: 1.5 },
+        { x: 570, y: 45, r: 1.8 }, { x: 630, y: 100, r: 1.3 }, { x: 690, y: 35, r: 2.2 },
+        { x: 740, y: 70, r: 1.5 }, { x: 770, y: 15, r: 1.8 },
+    ]
+    return (
+        <>
+            <svg className="absolute inset-x-0 top-0 w-full h-[70%]" viewBox="0 0 800 200" preserveAspectRatio="none" aria-hidden="true">
+                {stars.map((s, i) => (
+                    <circle key={i} cx={s.x} cy={s.y} r={s.r} fill="#f5f0e0" opacity={0.55 + (i % 3) * 0.15} />
+                ))}
+            </svg>
+            <svg className="absolute inset-x-0 bottom-0 w-full h-[18%]" viewBox="0 0 800 200" preserveAspectRatio="none" aria-hidden="true">
+                <rect x="0" y="170" width="800" height="30" fill="#050810" />
+                <polygon points="100,170 220,170 200,140 120,140" fill="#050810" />
+                <polygon points="500,170 650,170 625,135 525,135" fill="#050810" />
+            </svg>
+        </>
+    )
+}
+
 export default function DojoBackground({ variant }: { variant: BgVariant }) {
     return (
         <div className="absolute inset-0" style={{ background: SKY[variant] }}>
@@ -112,6 +136,8 @@ export default function DojoBackground({ variant }: { variant: BgVariant }) {
                 </>
             )}
             {variant === 'temple_fire' && <TempleSilhouette />}
+            {variant === 'starry_night' && <StarrySilhouette />}
+            {variant === 'dawn_mist' && <MountainSilhouette back="#4a4558" front="#332f45" />}
         </div>
     )
 }
