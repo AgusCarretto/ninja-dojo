@@ -82,7 +82,8 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 1200,
         description: 'Roca volcánica con magma en su interior.',
         image: '🪨',
-        sprite: { sheet: 'kenney', x: 0, y: 306, w: 16, h: 16 },
+        sprite: { sheet: 'kenney', x: 221, y: 442, w: 16, h: 16 },
+        cssClass: 'saturate-[0.6]',
         requiredLevel: 7
     },
 
@@ -130,7 +131,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 1500,
         description: 'El emblema definitivo del clan dragón.',
         image: '🐉',
-        sprite: { sheet: 'kenney', x: 850, y: 0, w: 16, h: 50 },
+        sprite: { sheet: 'kenney', x: 850, y: 0, w: 16, h: 48 },
         cssClass: 'hue-rotate-[25deg] saturate-150',
         requiredLevel: 10
     },
