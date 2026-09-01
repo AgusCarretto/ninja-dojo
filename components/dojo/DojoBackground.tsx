@@ -1,9 +1,11 @@
-type BgVariant = 'sunrise' | 'bamboo_night' | 'temple_fire'
+type BgVariant = 'sunrise' | 'bamboo_night' | 'temple_fire' | 'starry_night' | 'dawn_mist'
 
 const SKY: Record<BgVariant, string> = {
     sunrise: 'linear-gradient(to bottom, #1a1330 0%, #4a2145 28%, #b1483d 52%, #e8823a 72%, #f4b860 88%, #2a1f3d 100%)',
     bamboo_night: 'linear-gradient(to bottom, #0a1128 0%, #123349 35%, #1f5568 65%, #2f7a78 100%)',
     temple_fire: 'linear-gradient(to bottom, #0a0503 0%, #2b0a08 28%, #74180f 52%, #c73e1d 74%, #f2994a 90%, #1a0503 100%)',
+    starry_night: 'linear-gradient(to bottom, #0a0503 0%, #1a1a2e 50%, #0f0f1e 100%)',
+    dawn_mist: 'linear-gradient(to bottom, #1a1a2e 0%, #3d3d5c 40%, #8a7ba8 70%, #c9b8d4 100%)',
 }
 
 function Moon() {

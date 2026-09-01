@@ -5,6 +5,7 @@ export interface EquippedItems {
     mat?: string
     relic?: string
     artifact?: string
+    flame?: string
     title?: string
 }
 

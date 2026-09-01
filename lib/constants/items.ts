@@ -1,7 +1,7 @@
 export interface ShopItem {
     id: string
     name: string
-    type: 'background' | 'mat' | 'relic' | 'artifact' | 'consumable'
+    type: 'background' | 'mat' | 'relic' | 'artifact' | 'flame' | 'consumable'
     category: 'cosmetic' | 'consumable'
     price: number
     description: string
@@ -9,7 +9,8 @@ export interface ShopItem {
     cssClass?: string // Clases CSS extra que se le suman al render (SpriteItem o Image)
     imageUrl?: string // Ruta de imagen legacy (ítems no migrados a sprite todavía)
     sprite?: { sheet: 'kenney'; x: number; y: number; w: number; h: number } // Recorte en el spritesheet pixel-art
-    bgVariant?: 'sunrise' | 'bamboo_night' | 'temple_fire' // Fondo generado por código (gradiente + silueta SVG)
+    bgVariant?: 'sunrise' | 'bamboo_night' | 'temple_fire' | 'starry_night' | 'dawn_mist' // Fondo generado por código (gradiente + silueta SVG)
+    flameFilter?: string // CSS filter fijo para el fuego (ítems type 'flame'), ej. 'hue-rotate(80deg) saturate(1.5)'
     requiredLevel?: number
 }
 
@@ -48,6 +49,28 @@ export const SHOP_ITEMS: ShopItem[] = [
         image: '🌋',
         bgVariant: 'temple_fire',
         requiredLevel: 10
+    },
+    {
+        id: 'bg_starry_night',
+        name: 'Noche Estrellada',
+        type: 'background',
+        category: 'cosmetic',
+        price: 200,
+        description: 'Un cielo cuajado de estrellas para las noches de entrenamiento silencioso.',
+        image: '✨',
+        bgVariant: 'starry_night',
+        requiredLevel: 2
+    },
+    {
+        id: 'bg_dawn_mist',
+        name: 'Niebla del Alba',
+        type: 'background',
+        category: 'cosmetic',
+        price: 600,
+        description: 'La calma antes del entrenamiento, entre montañas cubiertas de niebla.',
+        image: '🌫️',
+        bgVariant: 'dawn_mist',
+        requiredLevel: 6
     },
 
     // ==========================================
@@ -185,5 +208,42 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 500,
         description: 'Si un día se te escapa, el amuleto absorbe el golpe y tu racha sigue viva. Máximo 1 a la vez.',
         image: '🛡️'
+    },
+
+    // ==========================================
+    // 🔥 COLORES DE FUEGO
+    // ==========================================
+    {
+        id: 'fire_emerald',
+        name: 'Llama Esmeralda',
+        type: 'flame',
+        category: 'cosmetic',
+        price: 500,
+        description: 'Un fuego verde intenso, sin importar tu racha actual.',
+        image: '💚',
+        flameFilter: 'hue-rotate(80deg) saturate(1.5)',
+        requiredLevel: 3
+    },
+    {
+        id: 'fire_sakura',
+        name: 'Llama Sakura',
+        type: 'flame',
+        category: 'cosmetic',
+        price: 700,
+        description: 'Un fuego rosado, delicado y feroz a la vez.',
+        image: '🌸',
+        flameFilter: 'hue-rotate(300deg) saturate(1.2)',
+        requiredLevel: 5
+    },
+    {
+        id: 'fire_shadow',
+        name: 'Llama de las Sombras',
+        type: 'flame',
+        category: 'cosmetic',
+        price: 1200,
+        description: 'Un fuego oscuro que arde igual de fuerte.',
+        image: '🖤',
+        flameFilter: 'hue-rotate(220deg) saturate(0.6) brightness(0.6)',
+        requiredLevel: 8
     }
 ]
