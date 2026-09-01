@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { SHOP_ITEMS, ShopItem } from '@/lib/constants/items'
-import { Coins, Lock, CheckCircle2, ShoppingBag, LayoutGrid, Image as ImageIcon, Shield, Lamp, Sparkles } from 'lucide-react'
+import { Coins, Lock, CheckCircle2, ShoppingBag, Image as ImageIcon, Sparkles, Flame } from 'lucide-react'
 import TopUserBar from '@/components/ui/TopUserBar'
 import DojoLoader from '@/components/ui/DojoLoader'
 import Image from 'next/image'
@@ -12,7 +12,7 @@ import type { EquippedItems, Profile } from '@/lib/types'
 import SpriteItem from '@/components/ui/SpriteItem'
 import DojoBackground from '@/components/dojo/DojoBackground'
 
-type Category = 'background' | 'mat' | 'relic' | 'artifact' | 'consumable'
+type Category = 'background' | 'mat' | 'relic' | 'artifact' | 'flame' | 'consumable'
 
 const fitScale = (w: number, h: number, target = 104) => Math.max(1, Math.floor(target / Math.max(w, h)))
 
@@ -94,9 +94,7 @@ export default function ShopPage() {
 
     const categories: { id: Category, label: string, icon: React.ReactNode }[] = [
         { id: 'background', label: 'Fondos', icon: <ImageIcon size={16} /> },
-        { id: 'mat', label: 'Tatamis', icon: <LayoutGrid size={16} /> },
-        { id: 'relic', label: 'Reliquias', icon: <Shield size={16} /> },
-        { id: 'artifact', label: 'Artefactos', icon: <Lamp size={16} /> },
+        { id: 'flame', label: 'Colores', icon: <Flame size={16} /> },
         { id: 'consumable', label: 'Amuletos', icon: <Sparkles size={16} /> },
     ]
 
