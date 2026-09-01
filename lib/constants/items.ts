@@ -71,6 +71,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         description: 'Piedra preciosa que concentra la energía del dojo.',
         image: '🟩',
         sprite: { sheet: 'kenney', x: 170, y: 425, w: 16, h: 16 },
+        cssClass: 'saturate-[0.5]',
         requiredLevel: 3
     },
     {
