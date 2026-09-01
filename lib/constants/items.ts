@@ -6,8 +6,9 @@ export interface ShopItem {
     price: number
     description: string
     image: string // Emoji para la UI de la tienda
-    cssClass?: string // Opcional por si en algún momento querés mezclar CSS con la imagen
-    imageUrl?: string // 🔥 La ruta real de la imagen para el motor 2D
+    cssClass?: string // Clases CSS extra que se le suman al render (SpriteItem o Image)
+    imageUrl?: string // Ruta de imagen legacy (ítems no migrados a sprite todavía)
+    sprite?: { sheet: 'kenney'; x: number; y: number; w: number; h: number } // Recorte en el spritesheet pixel-art
     requiredLevel?: number
 }
 
@@ -59,8 +60,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 0,
         description: 'Madera resistente y gastada por el entrenamiento.',
         image: '🪵',
-        imageUrl: '/shop/mats/mat_wood-modified.png'
-
+        sprite: { sheet: 'kenney', x: 136, y: 51, w: 16, h: 16 }
     },
     {
         id: 'mat_jade',
@@ -70,7 +70,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 400,
         description: 'Piedra preciosa que concentra la energía del dojo.',
         image: '🟩',
-        imageUrl: '/shop/mats/mat_jade-modified.png',
+        sprite: { sheet: 'kenney', x: 170, y: 425, w: 16, h: 16 },
         requiredLevel: 3
     },
     {
@@ -81,7 +81,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 1200,
         description: 'Roca volcánica con magma en su interior.',
         image: '🪨',
-        imageUrl: '/shop/mats/mat_obsidian-modified (1).png',
+        sprite: { sheet: 'kenney', x: 0, y: 306, w: 16, h: 16 },
         requiredLevel: 7
     },
 
@@ -129,7 +129,8 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 1500,
         description: 'El emblema definitivo del clan dragón.',
         image: '🐉',
-        imageUrl: '/shop/relics/relic_dragon-modified.png',
+        sprite: { sheet: 'kenney', x: 850, y: 0, w: 16, h: 50 },
+        cssClass: 'hue-rotate-[25deg] saturate-150',
         requiredLevel: 10
     },
 
@@ -144,7 +145,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 100,
         description: 'Ilumina los rincones más oscuros de tu mente.',
         image: '🏮',
-        imageUrl: '/shop/artifacts/artifact_lantern-modified.png',
+        sprite: { sheet: 'kenney', x: 289, y: 119, w: 16, h: 16 },
         requiredLevel: 2
     },
     {
@@ -155,7 +156,7 @@ export const SHOP_ITEMS: ShopItem[] = [
         price: 350,
         description: 'La paciencia materializada en una planta.',
         image: '🌳',
-        imageUrl: '/shop/artifacts/artifact_bonsai-modified.png',
+        sprite: { sheet: 'kenney', x: 221, y: 153, w: 16, h: 16 },
         requiredLevel: 4
     },
     {
