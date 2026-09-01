@@ -9,8 +9,11 @@ import DojoLoader from '@/components/ui/DojoLoader'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import type { EquippedItems, Profile } from '@/lib/types'
+import SpriteItem from '@/components/ui/SpriteItem'
 
 type Category = 'background' | 'mat' | 'relic' | 'artifact' | 'consumable'
+
+const fitScale = (w: number, h: number, target = 104) => Math.max(1, Math.floor(target / Math.max(w, h)))
 
 export default function ShopPage() {
     const [profile, setProfile] = useState<Profile | null>(null)
@@ -157,12 +160,24 @@ export default function ShopPage() {
                                 )}
 
                                 <div className="w-full h-32 bg-black/40 rounded-xl mb-4 relative flex items-center justify-center overflow-hidden border border-white/5 group-hover:bg-black/60 transition-colors">
-                                    {item.imageUrl ? (
+                                    {item.sprite ? (
+                                        <SpriteItem
+                                            sheet={item.sprite.sheet}
+                                            x={item.sprite.x}
+                                            y={item.sprite.y}
+                                            w={item.sprite.w}
+                                            h={item.sprite.h}
+                                            scale={fitScale(item.sprite.w, item.sprite.h)}
+                                            alt={item.name}
+                                            className={`drop-shadow-2xl transition-transform duration-500 group-hover:scale-110 ${item.cssClass || ''}
+                        ${(!owned || levelLocked) && 'opacity-50 grayscale'}`}
+                                        />
+                                    ) : item.imageUrl ? (
                                         <Image
                                             src={item.imageUrl}
                                             alt={item.name}
                                             fill
-                                            className={`object-contain p-2 drop-shadow-2xl transition-transform duration-500 group-hover:scale-110 
+                                            className={`object-contain p-2 drop-shadow-2xl transition-transform duration-500 group-hover:scale-110
                         ${(!owned || levelLocked) && 'opacity-50 grayscale'}`}
                                         />
                                     ) : (
