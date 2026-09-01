@@ -3,6 +3,7 @@
 import { SHOP_ITEMS } from '@/lib/constants/items'
 import ScrollWall from '@/components/dojo/ScrollWall'
 import Image from 'next/image'
+import SpriteItem from '@/components/ui/SpriteItem'
 
 interface DojoRoomProps {
     equipped: {
@@ -31,13 +32,26 @@ export default function DojoRoom({ equipped, children, dojoOwnerId, currentUserI
                 {/* 1. CAPA FONDO */}
                 {bgItem?.imageUrl && (
                     <div className="absolute inset-0">
-                        <Image src={bgItem.imageUrl} alt={bgItem.name} fill className="object-cover opacity-90" priority />
+                        <Image src={bgItem.imageUrl} alt={bgItem.name} fill className="object-cover opacity-90" preload />
                         <div className="absolute inset-0 bg-black/30 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
                     </div>
                 )}
 
                 {/* 2. CAPA RELIQUIA (Pared) */}
-                {relicItem?.imageUrl && (
+                {relicItem?.sprite ? (
+                    <div className="absolute top-8 w-48 flex justify-center drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
+                        <SpriteItem
+                            sheet={relicItem.sprite.sheet}
+                            x={relicItem.sprite.x}
+                            y={relicItem.sprite.y}
+                            w={relicItem.sprite.w}
+                            h={relicItem.sprite.h}
+                            scale={4}
+                            alt={relicItem.name}
+                            className={`brightness-90 contrast-110 ${relicItem.cssClass || ''}`}
+                        />
+                    </div>
+                ) : relicItem?.imageUrl && (
                     <div className="absolute top-8 w-48 h-48 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
                         {/* Agregamos un filtro ligero para integrarlo */}
                         <Image src={relicItem.imageUrl} alt={relicItem.name} fill className="object-contain brightness-90 contrast-110" />
@@ -45,7 +59,20 @@ export default function DojoRoom({ equipped, children, dojoOwnerId, currentUserI
                 )}
 
                 {/* 3. CAPA TATAMI (Suelo) - 🔥 AJUSTE DE ILUMINACIÓN */}
-                {matItem?.imageUrl ? (
+                {matItem?.sprite ? (
+                    <div className="absolute bottom-12 drop-shadow-2xl">
+                        <SpriteItem
+                            sheet={matItem.sprite.sheet}
+                            x={matItem.sprite.x}
+                            y={matItem.sprite.y}
+                            w={matItem.sprite.w}
+                            h={matItem.sprite.h}
+                            scale={8}
+                            alt={matItem.name}
+                            className={`brightness-[0.8] contrast-[1.2] ${matItem.cssClass || ''}`}
+                        />
+                    </div>
+                ) : matItem?.imageUrl ? (
                     <div className="absolute bottom-12 w-[240px] h-[140px] drop-shadow-2xl">
                         {/* Le bajamos el brillo y subimos contraste para que parezca iluminado por el fuego */}
                         <Image src={matItem.imageUrl} alt={matItem.name} fill className="object-contain brightness-[0.8] contrast-[1.2]" />
@@ -60,7 +87,20 @@ export default function DojoRoom({ equipped, children, dojoOwnerId, currentUserI
                 </div>
 
                 {/* 5. CAPA ARTEFACTO (Primer plano) - 🔥 AJUSTE DE ILUMINACIÓN */}
-                {artifactItem?.imageUrl && (
+                {artifactItem?.sprite ? (
+                    <div className="absolute bottom-2 left-2 z-50 drop-shadow-2xl">
+                        <SpriteItem
+                            sheet={artifactItem.sprite.sheet}
+                            x={artifactItem.sprite.x}
+                            y={artifactItem.sprite.y}
+                            w={artifactItem.sprite.w}
+                            h={artifactItem.sprite.h}
+                            scale={8}
+                            alt={artifactItem.name}
+                            className={`brightness-[0.6] contrast-[1.1] sepia-[0.3] ${artifactItem.cssClass || ''}`}
+                        />
+                    </div>
+                ) : artifactItem?.imageUrl && (
                     <div className="absolute bottom-2 left-2 w-40 h-40 z-50 drop-shadow-2xl">
                         {/* Este lo oscurecemos MUCHO más y le damos tono sepia/naranja porque está en la penumbra */}
                         <Image src={artifactItem.imageUrl} alt={artifactItem.name} fill className="object-contain brightness-[0.6] contrast-[1.1] sepia-[0.3]" />
